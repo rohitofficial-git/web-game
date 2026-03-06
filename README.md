@@ -4,7 +4,7 @@ Play chess with a friend online in real-time! No login, no signup, completely fr
 
 ## 🎮 How to Play
 
-1. **Both players open this link:** `https://rohitofficial-git.github.io/realtime-chess/`
+1. **Both players open this link:(https://rohitofficial-git.github.io/web-game/)
 
 2. **One player clicks** "CREATE ROOM" (becomes White)
 
@@ -26,6 +26,6 @@ Play chess with a friend online in real-time! No login, no signup, completely fr
 ## 🔗 Share with Friend
 Just send them this link - that's it!
 
----
+(https://rohitofficial-git.github.io/web-game/)
 
 Made with ❤️ for playing chess with friends
