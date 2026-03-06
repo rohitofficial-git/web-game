@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>♜ FAST CHESS - Instant Connect</title>
+    <title>♜ SIMPLE REAL-TIME CHESS</title>
     <style>
         * {
             box-sizing: border-box;
@@ -20,11 +20,10 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            margin: 0;
             padding: 10px;
         }
         
-        .game-container {
+        .container {
             background: #3a2c1b;
             padding: 20px;
             border-radius: 16px;
@@ -33,18 +32,14 @@
             width: 100%;
         }
         
-        .header {
+        h1 {
+            color: #ffd966;
             text-align: center;
             margin-bottom: 20px;
-        }
-        
-        .header h1 {
-            color: #ffd966;
             font-size: 2.2em;
         }
         
-        /* Connection Box */
-        .connect-box {
+        .section {
             background: #1e1a0f;
             border: 2px solid #b88b4a;
             border-radius: 12px;
@@ -52,7 +47,7 @@
             margin-bottom: 20px;
         }
         
-        .code-display {
+        .code-box {
             background: #2a2418;
             padding: 20px;
             border-radius: 10px;
@@ -66,24 +61,28 @@
             color: #ffd966;
             letter-spacing: 10px;
             font-family: monospace;
+            background: #1a150e;
+            padding: 10px;
+            border-radius: 8px;
         }
         
-        .code-input {
+        input {
             width: 100%;
             padding: 18px;
+            font-size: 2em;
+            text-align: center;
             background: #2a2418;
             border: 2px solid #b88b4a;
             color: #ffd966;
-            font-size: 2em;
-            text-align: center;
-            font-family: monospace;
             border-radius: 10px;
             margin: 10px 0;
+            font-family: monospace;
         }
         
         button {
             width: 100%;
             padding: 18px;
+            margin: 5px 0;
             background: #5d3f1f;
             border: 2px solid #b88b4a;
             color: #ffd966;
@@ -91,7 +90,6 @@
             font-weight: bold;
             border-radius: 10px;
             cursor: pointer;
-            margin: 5px 0;
         }
         
         button.green {
@@ -107,11 +105,9 @@
             margin: 10px 0;
         }
         
-        .red-bg { background: #5a2e2e; color: #ffb3b3; }
-        .yellow-bg { background: #5a4a2e; color: #ffd966; }
-        .green-bg { background: #2e5a2e; color: #b3ffb3; }
+        .waiting { background: #5a4a2e; color: #ffd966; }
+        .connected { background: #2e5a2e; color: #b3ffb3; }
         
-        /* Game Info */
         .game-header {
             display: flex;
             justify-content: space-between;
@@ -122,56 +118,41 @@
             margin-bottom: 15px;
         }
         
-        .turn-box {
+        .turn-badge {
             padding: 10px 20px;
             border-radius: 25px;
             font-weight: bold;
-            font-size: 1.2em;
         }
         
-        .white-bg { background: white; color: black; }
-        .black-bg { background: black; color: #ffd966; }
+        .white-turn { background: white; color: black; }
+        .black-turn { background: black; color: #ffd966; }
         
-        .you-box {
+        .player-info {
             display: flex;
             align-items: center;
             gap: 10px;
         }
         
-        .color-circle {
+        .player-circle {
             width: 35px;
             height: 35px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
-        }
-        
-        .white-circle {
-            background: white;
-            color: black;
             border: 2px solid #ffd966;
         }
         
-        .black-circle {
-            background: black;
-            color: #ffd966;
-            border: 2px solid #ffd966;
-        }
+        .white-circle { background: white; color: black; }
+        .black-circle { background: black; color: #ffd966; }
         
-        .online-badge {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            color: #6bff6b;
-        }
-        
-        .dot {
+        .online-dot {
+            display: inline-block;
             width: 10px;
             height: 10px;
             background: #6bff6b;
             border-radius: 50%;
+            margin-right: 5px;
             animation: blink 1.5s infinite;
         }
         
@@ -181,23 +162,15 @@
             100% { opacity: 1; }
         }
         
-        /* Chess Board */
-        .board-wrapper {
-            display: flex;
-            justify-content: center;
-            margin: 15px 0;
-        }
-        
         .board {
             display: grid;
             grid-template-columns: repeat(8, 1fr);
             aspect-ratio: 1;
-            width: 100%;
-            max-width: 500px;
             border: 3px solid #4a3720;
             gap: 2px;
             background: #4a3720;
             padding: 2px;
+            margin: 15px 0;
         }
         
         .square {
@@ -217,7 +190,7 @@
         
         .hidden { display: none; }
         
-        .button-grid {
+        .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
@@ -226,34 +199,32 @@
     </style>
 </head>
 <body>
-    <div class="game-container">
-        <div class="header">
-            <h1>♜ FAST CHESS ♞</h1>
-        </div>
+    <div class="container">
+        <h1>♜ REAL-TIME CHESS ♞</h1>
         
-        <!-- CONNECTION SECTION -->
+        <!-- CONNECT SECTION -->
         <div id="connectSection">
-            <div class="connect-box">
+            <div class="section">
                 <button class="green" onclick="showCreate()">🎮 CREATE GAME</button>
                 <button onclick="showJoin()">🔑 JOIN GAME</button>
                 
                 <!-- Create View -->
                 <div id="createView" class="hidden">
-                    <div class="code-display">
-                        <div style="color: #c9b27e; margin-bottom: 10px;">YOUR ROOM CODE:</div>
+                    <div class="code-box">
+                        <div style="color: #c9b27e; margin-bottom: 10px;">Share this code:</div>
                         <div class="big-code" id="roomCode">------</div>
                         <button onclick="copyCode()" style="margin-top: 15px;">📋 COPY CODE</button>
                     </div>
-                    <div class="status yellow-bg" id="createStatus">
+                    <div class="status waiting" id="waitingStatus">
                         🟡 Waiting for opponent...
                     </div>
                 </div>
                 
                 <!-- Join View -->
                 <div id="joinView" class="hidden">
-                    <input class="code-input" id="joinCode" placeholder="ENTER CODE" maxlength="6">
+                    <input type="text" id="joinCode" placeholder="ENTER 6-DIGIT CODE" maxlength="6">
                     <button class="green" onclick="joinGame()">CONNECT</button>
-                    <div class="status red-bg" id="joinStatus"></div>
+                    <div class="status" id="joinMessage"></div>
                 </div>
             </div>
         </div>
@@ -261,37 +232,35 @@
         <!-- GAME SECTION -->
         <div id="gameSection" class="hidden">
             <div class="game-header">
-                <div class="you-box">
-                    <span class="color-circle white-circle" id="youCircle">♔</span>
-                    <span id="youText">You: White</span>
+                <div class="player-info">
+                    <span class="player-circle white-circle" id="playerCircle">♔</span>
+                    <span id="playerText">You: White</span>
                 </div>
-                <div class="turn-box white-bg" id="turnBox">WHITE</div>
-                <div class="online-badge">
-                    <span class="dot"></span>
-                    <span>Online</span>
+                <div class="turn-badge white-turn" id="turnDisplay">WHITE</div>
+                <div>
+                    <span class="online-dot"></span>
+                    <span style="color: #6bff6b;">Online</span>
                 </div>
             </div>
             
-            <div class="board-wrapper">
-                <div class="board" id="board"></div>
-            </div>
+            <div class="board" id="board"></div>
             
-            <div class="button-grid">
+            <div class="grid-2">
                 <button onclick="resetGame()">🔄 NEW GAME</button>
                 <button onclick="disconnect()" style="background: #5a2e2e;">🚪 EXIT</button>
             </div>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.0/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <script>
-        // Simple pieces
+        // Chess pieces
         const PIECES = {
             'K':'♔', 'Q':'♕', 'R':'♖', 'B':'♗', 'N':'♘', 'P':'♙',
             'k':'♚', 'q':'♛', 'r':'♜', 'b':'♝', 'n':'♞', 'p':'♟'
         };
         
-        // Starting board
+        // Starting position
         const START = [
             ['r','n','b','q','k','b','n','r'],
             ['p','p','p','p','p','p','p','p'],
@@ -303,17 +272,15 @@
             ['R','N','B','Q','K','B','N','R']
         ];
         
+        // Game state
         let board = JSON.parse(JSON.stringify(START));
         let currentTurn = 'w';
         let selected = null;
-        let moves = [];
+        let possibleMoves = [];
         let myColor = null;
+        let conn = null;
+        let peer = null;
         let roomCode = null;
-        let connected = false;
-        
-        // Use a public signaling server (works instantly)
-        const SERVER = 'https://chess-signaling-server.onrender.com';
-        let socket = null;
         
         function showCreate() {
             document.getElementById('createView').classList.remove('hidden');
@@ -324,83 +291,132 @@
         function showJoin() {
             document.getElementById('createView').classList.add('hidden');
             document.getElementById('joinView').classList.remove('hidden');
+            document.getElementById('joinMessage').innerHTML = '';
         }
         
         function createRoom() {
-            // Generate random 6-digit code
+            // Generate random peer ID
             roomCode = Math.floor(100000 + Math.random() * 900000).toString();
             document.getElementById('roomCode').innerText = roomCode;
             
-            // Connect to server
-            socket = io(SERVER);
+            // Create peer as host
+            peer = new Peer(roomCode);
             
-            socket.on('connect', () => {
-                socket.emit('create-room', roomCode);
+            peer.on('open', (id) => {
+                console.log('Host ready with ID:', id);
             });
             
-            socket.on('opponent-joined', () => {
-                myColor = 'w';
-                startGame();
+            peer.on('connection', (connection) => {
+                conn = connection;
+                myColor = 'w'; // Host is white
+                
+                conn.on('open', () => {
+                    console.log('Connected to opponent');
+                    // Send initial data
+                    conn.send({
+                        type: 'init',
+                        color: 'w',
+                        board: board,
+                        turn: currentTurn
+                    });
+                    
+                    // Start game
+                    startGame();
+                });
+                
+                conn.on('data', handleData);
+                
+                conn.on('close', () => {
+                    alert('Opponent disconnected');
+                    disconnect();
+                });
+            });
+            
+            peer.on('error', (err) => {
+                console.error(err);
+                alert('Connection error. Try again.');
             });
         }
         
         function joinGame() {
             const code = document.getElementById('joinCode').value;
             if (code.length !== 6) {
-                document.getElementById('joinStatus').innerText = '❌ Enter 6-digit code';
+                document.getElementById('joinMessage').innerHTML = '❌ Enter 6-digit code';
                 return;
             }
             
             roomCode = code;
+            document.getElementById('joinMessage').innerHTML = '🟡 Connecting...';
             
-            // Connect to server
-            socket = io(SERVER);
+            // Create peer as client
+            peer = new Peer();
             
-            socket.on('connect', () => {
-                socket.emit('join-room', roomCode);
+            peer.on('open', (id) => {
+                console.log('Client ready with ID:', id);
+                // Connect to host
+                conn = peer.connect(roomCode);
+                
+                conn.on('open', () => {
+                    console.log('Connected to host');
+                    myColor = 'b'; // Client is black
+                    
+                    conn.on('data', handleData);
+                    
+                    conn.on('close', () => {
+                        alert('Opponent disconnected');
+                        disconnect();
+                    });
+                    
+                    // Start game
+                    startGame();
+                });
             });
             
-            socket.on('room-joined', () => {
-                myColor = 'b';
-                startGame();
-            });
-            
-            socket.on('room-error', (msg) => {
-                document.getElementById('joinStatus').innerText = '❌ ' + msg;
+            peer.on('error', (err) => {
+                console.error(err);
+                document.getElementById('joinMessage').innerHTML = '❌ Invalid code or host not found';
             });
         }
         
-        function startGame() {
-            connected = true;
-            document.getElementById('connectSection').classList.add('hidden');
-            document.getElementById('gameSection').classList.remove('hidden');
-            
-            updateDisplay();
-            
-            // Listen for moves
-            socket.on('opponent-move', (data) => {
+        function handleData(data) {
+            if (data.type === 'init') {
+                // Initial sync
+                if (data.board) board = data.board;
+                if (data.turn) currentTurn = data.turn;
+                renderBoard();
+                updateTurn();
+            }
+            else if (data.type === 'move') {
+                // Opponent moved
                 board = data.board;
                 currentTurn = data.turn;
                 selected = null;
-                moves = [];
+                possibleMoves = [];
                 renderBoard();
                 updateTurn();
-            });
-            
-            socket.on('opponent-reset', () => {
+            }
+            else if (data.type === 'reset') {
+                // Game reset
                 board = JSON.parse(JSON.stringify(START));
                 currentTurn = 'w';
                 renderBoard();
                 updateTurn();
-            });
-            
-            socket.on('opponent-left', () => {
-                alert('Opponent disconnected');
-                disconnect();
-            });
+            }
         }
         
-        function getMoves(row, col) {
+        function startGame() {
+            document.getElementById('connectSection').classList.add('hidden');
+            document.getElementById('gameSection').classList.remove('hidden');
+            
+            // Update player info
+            document.getElementById('playerText').innerText = myColor === 'w' ? 'You: White' : 'You: Black';
+            document.getElementById('playerCircle').className = `player-circle ${myColor === 'w' ? 'white-circle' : 'black-circle'}`;
+            
+            renderBoard();
+            updateTurn();
+        }
+        
+        function getValidMoves(row, col) {
             let piece = board[row][col];
             if (!piece) return [];
             
@@ -410,13 +426,16 @@
             
             if (type === 'p') { // Pawn
                 let dir = isWhite ? -1 : 1;
-                let start = isWhite ? 6 : 1;
+                let startRow = isWhite ? 6 : 1;
                 
+                // Move forward
                 if (row+dir >=0 && row+dir<8 && !board[row+dir][col]) {
                     moves.push([row+dir, col]);
-                    if (row === start && !board[row+2*dir][col]) moves.push([row+2*dir, col]);
+                    if (row === startRow && !board[row+2*dir][col])
+                        moves.push([row+2*dir, col]);
                 }
                 
+                // Captures
                 for (let dc of [-1,1]) {
                     let nc = col + dc;
                     if (nc>=0 && nc<8 && row+dir>=0 && row+dir<8) {
@@ -457,8 +476,9 @@
                     for (let i=1; i<8; i++) {
                         let r = row + dr*i, c = col + dc*i;
                         if (r<0 || r>=8 || c<0 || c>=8) break;
-                        if (!board[r][c]) moves.push([r,c]);
-                        else {
+                        if (!board[r][c]) {
+                            moves.push([r,c]);
+                        } else {
                             if ((board[r][c]===board[r][c].toLowerCase())===isWhite)
                                 moves.push([r,c]);
                             break;
@@ -469,25 +489,29 @@
             return moves;
         }
         
-        function handleClick(row, col) {
-            if (!connected) return;
+        function handleSquareClick(row, col) {
+            if (!conn) return;
+            
+            // Check if it's my turn
             if ((myColor === 'w' && currentTurn !== 'w') || (myColor === 'b' && currentTurn !== 'b')) {
-                alert("Wait for your turn!");
+                alert("Not your turn!");
                 return;
             }
             
             if (selected === null) {
+                // Select piece
                 let piece = board[row][col];
                 if (piece && ((myColor==='w' && piece===piece.toUpperCase()) || 
                              (myColor==='b' && piece===piece.toLowerCase()))) {
                     selected = [row, col];
-                    moves = getMoves(row, col);
+                    possibleMoves = getValidMoves(row, col);
                     renderBoard();
                 }
                 return;
             }
             
-            if (moves.some(([r,c]) => r===row && c===col)) {
+            // Try to move
+            if (possibleMoves.some(([r,c]) => r===row && c===col)) {
                 // Make move
                 let [fromRow, fromCol] = selected;
                 board[row][col] = board[fromRow][fromCol];
@@ -495,15 +519,15 @@
                 currentTurn = currentTurn === 'w' ? 'b' : 'w';
                 
                 // Send to opponent
-                socket.emit('make-move', {
-                    room: roomCode,
+                conn.send({
+                    type: 'move',
                     board: board,
                     turn: currentTurn
                 });
             }
             
             selected = null;
-            moves = [];
+            possibleMoves = [];
             renderBoard();
             updateTurn();
         }
@@ -518,41 +542,39 @@
                     if (selected && selected[0]===i && selected[1]===j)
                         classes += ' selected';
                     
-                    if (moves.some(([r,c]) => r===i && c===j))
+                    if (possibleMoves.some(([r,c]) => r===i && c===j))
                         classes += board[i][j] ? ' capture' : ' possible';
                     
-                    html += `<div class="${classes}" onclick="handleClick(${i},${j})">${piece ? PIECES[piece] : ''}</div>`;
+                    html += `<div class="${classes}" onclick="handleSquareClick(${i},${j})">${piece ? PIECES[piece] : ''}</div>`;
                 }
             }
             document.getElementById('board').innerHTML = html;
         }
         
-        function updateDisplay() {
-            renderBoard();
-            updateTurn();
-            
-            document.getElementById('youText').innerText = myColor==='w' ? 'You: White' : 'You: Black';
-            document.getElementById('youCircle').className = `color-circle ${myColor==='w' ? 'white-circle' : 'black-circle'}`;
-        }
-        
         function updateTurn() {
-            let box = document.getElementById('turnBox');
-            box.innerText = currentTurn === 'w' ? 'WHITE' : 'BLACK';
-            box.className = `turn-box ${currentTurn==='w' ? 'white-bg' : 'black-bg'}`;
+            let turnBox = document.getElementById('turnDisplay');
+            turnBox.innerText = currentTurn === 'w' ? 'WHITE' : 'BLACK';
+            turnBox.className = `turn-badge ${currentTurn==='w' ? 'white-turn' : 'black-turn'}`;
         }
         
         function resetGame() {
             board = JSON.parse(JSON.stringify(START));
             currentTurn = 'w';
             selected = null;
-            moves = [];
+            possibleMoves = [];
             renderBoard();
             updateTurn();
-            socket.emit('reset-game', {room: roomCode});
+            
+            if (conn) {
+                conn.send({
+                    type: 'reset'
+                });
+            }
         }
         
         function disconnect() {
-            if (socket) socket.disconnect();
+            if (conn) conn.close();
+            if (peer) peer.destroy();
             location.reload();
         }
         
@@ -561,6 +583,7 @@
             alert('Code copied!');
         }
         
+        // Initial render
         renderBoard();
     </script>
 </body>
