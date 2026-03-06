@@ -1,706 +1,543 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>REAL-TIME CHESS • play online</title>
-<style>
-* {
-box-sizing: border-box;
-user-select: none;
-}
-body {
-background: #2d2a1e;
-font-family: 'Courier New', monospace;
-display: flex;
-justify-content: center;
-align-items: center;
-min-height: 100vh;
-margin: 0;
-padding: 20px;
-}
-.game-container {
-background: #3a2c1b;
-padding: 25px;
-border-radius: 16px;
-border: 3px solid #b88b4a;
-max-width: 800px;
-width: 100%;
-}
-.header {
-text-align: center;
-margin-bottom: 20px;
-}
-.header h1 {
-color: #ffd966;
-margin: 0;
-font-size: 2.5em;
-}
-.connection-panel {
-background: #1e1a0f;
-border: 2px solid #b88b4a;
-border-radius: 8px;
-padding: 15px;
-margin-bottom: 20px;
-}
-.room-section {
-display: flex;
-gap: 10px;
-margin-bottom: 15px;
-flex-wrap: wrap;
-}
-.room-section input {
-flex: 1;
-padding: 12px;
-background: #2a2418;
-border: 1px solid #b88b4a;
-color: #ffd966;
-font-family: monospace;
-font-size: 1em;
-border-radius: 5px;
-}
-button {
-padding: 12px 20px;
-background: #5d3f1f;
-border: 2px solid #b88b4a;
-color: #ffd966;
-font-size: 1em;
-font-weight: bold;
-border-radius: 8px;
-cursor: pointer;
-transition: all 0.2s;
-}
-button:hover {
-background: #7a5629;
-transform: translateY(-2px);
-}
-button:disabled {
-opacity: 0.5;
-cursor: not-allowed;
-}
-.connection-status {
-text-align: center;
-padding: 10px;
-border-radius: 5px;
-margin-top: 10px;
-font-weight: bold;
-}
-.status-disconnected {
-background: #5a2e2e;
-color: #ffb3b3;
-border: 1px solid #ff6b6b;
-}
-.status-connecting {
-background: #5a4a2e;
-color: #ffd966;
-border: 1px solid #ffd966;
-}
-.status-connected {
-background: #2e5a2e;
-color: #b3ffb3;
-border: 1px solid #6bff6b;
-}
-.game-info {
-background: #1e1a0f;
-border: 2px solid #b88b4a;
-border-radius: 8px;
-padding: 15px;
-margin-bottom: 20px;
-display: flex;
-justify-content: space-between;
-align-items: center;
-flex-wrap: wrap;
-gap: 10px;
-}
-.turn-indicator {
-padding: 10px 20px;
-border-radius: 30px;
-font-weight: bold;
-font-size: 1.3em;
-}
-.white-turn {
-background: #f0f0f0;
-color: #000;
-border: 2px solid #ffd966;
-}
-.black-turn {
-background: #222;
-color: #ffd966;
-border: 2px solid #ffd966;
-}
-.player-badge {
-display: flex;
-align-items: center;
-gap: 10px;
-padding: 8px 15px;
-border-radius: 30px;
-background: #2a2418;
-}
-.player-color {
-width: 30px;
-height: 30px;
-border-radius: 50%;
-display: flex;
-justify-content: center;
-align-items: center;
-font-size: 18px;
-}
-.chess-board {
-display: grid;
-grid-template-columns: repeat(8, 1fr);
-aspect-ratio: 1;
-border: 4px solid #4a3720;
-margin-bottom: 20px;
-}
-.square {
-aspect-ratio: 1;
-display: flex;
-justify-content: center;
-align-items: center;
-font-size: min(45px, 8vw);
-cursor: pointer;
-transition: all 0.1s;
-}
-.square.light { background: #eed9b2; }
-.square.dark { background: #8b5f3c; }
-.square.selected {
-background: #b3d9a0 !important;
-box-shadow: inset 0 0 0 4px #2d5e2d;
-}
-.square.possible {
-background: #9fc5e8 !important;
-box-shadow: inset 0 0 0 4px #1a4d8c;
-}
-.square.capture {
-background: #f4a7a7 !important;
-box-shadow: inset 0 0 0 4px #a13d3d;
-}
-.opponent-move {
-animation: highlight 0.5s;
-}
-@keyframes highlight {
-0% { filter: brightness(1.5); }
-100% { filter: brightness(1); }
-}
-.share-link {
-background: #1e1a0f;
-border: 2px solid #b88b4a;
-border-radius: 8px;
-padding: 15px;
-margin-top: 15px;
-}
-.link-box {
-display: flex;
-gap: 10px;
-margin-top: 10px;
-}
-.link-box input {
-flex: 1;
-padding: 10px;
-background: #2a2418;
-border: 1px solid #b88b4a;
-color: #ffd966;
-font-family: monospace;
-}
-.footer {
-text-align: center;
-color: #b88b4a;
-margin-top: 15px;
-font-size: 0.9em;
-}
-.online-indicator {
-display: flex;
-align-items: center;
-gap: 5px;
-color: #6bff6b;
-}
-.dot {
-width: 10px;
-height: 10px;
-background: #6bff6b;
-border-radius: 50%;
-animation: pulse 2s infinite;
-}
-@keyframes pulse {
-0% { opacity: 1; }
-50% { opacity: 0.3; }
-100% { opacity: 1; }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIMPLE REAL-TIME CHESS</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+        
+        body {
+            background: #2d2a1e;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .game-container {
+            background: #3a2c1b;
+            padding: 25px;
+            border-radius: 16px;
+            border: 3px solid #b88b4a;
+            max-width: 700px;
+            width: 100%;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            color: #ffd966;
+            margin: 0;
+            font-size: 2.5em;
+        }
+        
+        .connection-area {
+            background: #1e1a0f;
+            border: 2px solid #b88b4a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .room-display {
+            background: #2a2418;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .room-code {
+            font-size: 3em;
+            font-weight: bold;
+            color: #ffd966;
+            letter-spacing: 10px;
+            margin: 10px 0;
+        }
+        
+        .button-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        button {
+            padding: 15px;
+            background: #5d3f1f;
+            border: 2px solid #b88b4a;
+            color: #ffd966;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background: #7a5629;
+        }
+        
+        button.big {
+            grid-column: span 2;
+            background: #2e5a2e;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        
+        .status.waiting { background: #5a4a2e; color: #ffd966; }
+        .status.connected { background: #2e5a2e; color: #b3ffb3; }
+        .status.disconnected { background: #5a2e2e; color: #ffb3b3; }
+        
+        .turn-indicator {
+            text-align: center;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+        
+        .turn-white { background: #f0f0f0; color: #000; }
+        .turn-black { background: #222; color: #ffd966; }
+        
+        .chess-board {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            aspect-ratio: 1;
+            border: 4px solid #4a3720;
+            margin: 20px 0;
+        }
+        
+        .square {
+            aspect-ratio: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: min(45px, 8vw);
+            cursor: pointer;
+        }
+        
+        .square.light { background: #eed9b2; }
+        .square.dark { background: #8b5f3c; }
+        
+        .square.selected {
+            background: #b3d9a0 !important;
+            box-shadow: inset 0 0 0 4px #2d5e2d;
+        }
+        
+        .square.possible {
+            background: #9fc5e8 !important;
+            box-shadow: inset 0 0 0 4px #1a4d8c;
+        }
+        
+        .online-dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: #6bff6b;
+            border-radius: 50%;
+            margin-right: 5px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+        
+        .footer {
+            text-align: center;
+            color: #b88b4a;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-<div class="game-container">
-<div class="header">
-<h1>♜ LIVE CHESS ♞</h1>
-<p>⚡ real-time • peer-to-peer • no server</p>
-</div>
-<!-- Connection Panel -->
-<div class="connection-panel">
-<div class="room-section">
-<input type="text" id="roomInput" placeholder="Enter room code or leave empty for new room">
-<button onclick="joinRoom()" id="joinBtn">🔗 JOIN ROOM</button>
-<button onclick="createRoom()" id="createBtn">✨ CREATE ROOM</button>
-</div>
-<div class="connection-status status-disconnected" id="connectionStatus">
-🔴 Disconnected - Create or join a room
-</div>
-</div>
-<!-- Game Info -->
-<div class="game-info">
-<div class="turn-indicator white-turn" id="turnDisplay">WHITE'S TURN</div>
-<div class="online-indicator" id="onlineIndicator" style="display: none;">
-<span class="dot"></span> Opponent Online
-</div>
-<div class="player-badge" id="yourColor">
-<div class="player-color player-white">♔</div>
-<span>You are: <strong id="yourColorText">White</strong></span>
-</div>
-</div>
-<!-- Chess Board -->
-<div class="chess-board" id="chessboard"></div>
-<!-- Share Link -->
-<div class="share-link" id="shareSection" style="display: none;">
-<div style="color: #ffd966; margin-bottom: 5px;">📋 Share this link with your opponent:</div>
-<div class="link-box">
-<input type="text" id="gameLink" readonly>
-<button onclick="copyLink()" id="copyBtn">COPY</button>
-</div>
-</div>
-<!-- Controls -->
-<div style="display: flex; gap: 10px; margin-top: 15px;">
-<button onclick="resetBoard()" style="flex: 1;" id="resetBtn">🔄 NEW GAME</button>
-<button onclick="copyRoomCode()" style="flex: 1;" id="roomCodeBtn">📋 COPY ROOM CODE</button>
-</div>
-<div class="footer">
-⚡ Connected directly • moves appear instantly • both play in real-time
-</div>
-</div>
-<script>
-// Chess pieces
-const PIECES = {
-'K': '♔', 'Q': '♕', 'R': '♖', 'B': '♗', 'N': '♘', 'P': '♙',
-'k': '♚', 'q': '♛', 'r': '♜', 'b': '♝', 'n': '♞', 'p': '♟'
-};
-// Starting board
-const INITIAL_BOARD = [
-['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
-['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
-['', '', '', '', '', '', '', ''],
-['', '', '', '', '', '', '', ''],
-['', '', '', '', '', '', '', ''],
-['', '', '', '', '', '', '', ''],
-['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
-['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']
-];
-// Game state
-let board = JSON.parse(JSON.stringify(INITIAL_BOARD));
-let currentTurn = 'w';
-let selectedRow = null;
-let selectedCol = null;
-let possibleMoves = [];
-// Connection state
-let peerConnection = null;
-let dataChannel = null;
-let roomCode = null;
-let isConnected = false;
-let isHost = false;
-let myColor = 'w'; // 'w' or 'b'
-// WebRTC configuration (free STUN servers)
-const configuration = {
-iceServers: [
-{ urls: 'stun:stun.l.google.com:19302' },
-{ urls: 'stun:stun1.l.google.com:19302' }
-]
-};
-// Generate random room code
-function generateRoomCode() {
-return Math.random().toString(36).substring(2, 8).toUpperCase();
-}
-// Create new room
-function createRoom() {
-roomCode = generateRoomCode();
-isHost = true;
-myColor = 'w'; // Host is white
-document.getElementById('roomInput').value = roomCode;
-document.getElementById('connectionStatus').innerHTML = '🟡 Waiting for opponent to join...';
-document.getElementById('connectionStatus').className = 'connection-status status-connecting';
-// Create peer connection as host
-createPeerConnection();
-// Show share section
-const shareUrl = window.location.href.split('?')[0] + '?room=' + roomCode;
-document.getElementById('gameLink').value = shareUrl;
-document.getElementById('shareSection').style.display = 'block';
-updateUI();
-}
-// Join existing room
-function joinRoom() {
-const input = document.getElementById('roomInput').value.trim().toUpperCase();
-if (!input) {
-alert('Enter a room code');
-return;
-}
-roomCode = input;
-isHost = false;
-myColor = 'b'; // Joiner is black
-document.getElementById('connectionStatus').innerHTML = '🟡 Connecting to room...';
-document.getElementById('connectionStatus').className = 'connection-status status-connecting';
-// Create peer connection as joiner
-createPeerConnection();
-updateUI();
-}
-// Create WebRTC peer connection
-function createPeerConnection() {
-peerConnection = new RTCPeerConnection(configuration);
-// Create data channel (host creates, joiner listens)
-if (isHost) {
-dataChannel = peerConnection.createDataChannel('chess');
-setupDataChannel();
-// Create offer
-peerConnection.createOffer()
-.then(offer => peerConnection.setLocalDescription(offer))
-.then(() => {
-// Wait for ICE candidates
-});
-} else {
-peerConnection.ondatachannel = (event) => {
-dataChannel = event.channel;
-setupDataChannel();
-};
-}
-// Handle ICE candidates
-peerConnection.onicecandidate = (event) => {
-if (event.candidate) {
-// In a real app, you'd send this via a signaling server
-// For demo, we'll use a simple prompt (in production, use a signaling server)
-if (isHost) {
-setTimeout(() => {
-const answer = prompt('Paste opponent\'s answer:');
-if (answer) {
-peerConnection.setRemoteDescription(JSON.parse(answer));
-}
-}, 1000);
-} else {
-setTimeout(() => {
-const offer = prompt('Paste host\'s offer:');
-if (offer) {
-peerConnection.setRemoteDescription(JSON.parse(offer))
-.then(() => peerConnection.createAnswer())
-.then(answer => peerConnection.setLocalDescription(answer))
-.then(() => {
-prompt('Send this answer to host:', JSON.stringify(peerConnection.localDescription));
-});
-}
-}, 1000);
-}
-}
-};
-// For demo purposes - in production you'd use a signaling server
-// This is a simplified version - real WebRTC needs signaling
-setTimeout(() => {
-if (peerConnection.connectionState === 'connected') {
-onConnected();
-}
-}, 5000);
-}
-// Setup data channel
-function setupDataChannel() {
-dataChannel.onopen = () => {
-onConnected();
-};
-dataChannel.onmessage = (event) => {
-const data = JSON.parse(event.data);
-handleOpponentMove(data);
-};
-dataChannel.onclose = () => {
-onDisconnected();
-};
-}
-// Handle successful connection
-function onConnected() {
-isConnected = true;
-document.getElementById('connectionStatus').innerHTML = '🟢 Connected! Playing against opponent';
-document.getElementById('connectionStatus').className = 'connection-status status-connected';
-document.getElementById('onlineIndicator').style.display = 'flex';
-document.getElementById('joinBtn').disabled = true;
-document.getElementById('createBtn').disabled = true;
-// Send initial board if host
-if (isHost) {
-sendMove(null); // Sync board
-}
-updateUI();
-}
-// Handle disconnection
-function onDisconnected() {
-isConnected = false;
-document.getElementById('connectionStatus').innerHTML = '🔴 Disconnected - Opponent left';
-document.getElementById('connectionStatus').className = 'connection-status status-disconnected';
-document.getElementById('onlineIndicator').style.display = 'none';
-document.getElementById('joinBtn').disabled = false;
-document.getElementById('createBtn').disabled = false;
-}
-// Handle opponent's move
-function handleOpponentMove(data) {
-if (data.type === 'move') {
-// Update board with opponent's move
-board = data.board;
-currentTurn = data.currentTurn;
-// Highlight the moved piece
-if (data.lastMove) {
-highlightSquare(data.lastMove.to[0], data.lastMove.to[1]);
-}
-// Clear selection
-selectedRow = null;
-selectedCol = null;
-possibleMoves = [];
-renderBoard();
-updateUI();
-} else if (data.type === 'reset') {
-board = JSON.parse(JSON.stringify(INITIAL_BOARD));
-currentTurn = 'w';
-renderBoard();
-updateUI();
-}
-}
-// Highlight square
-function highlightSquare(row, col) {
-// You could add a visual effect here
-console.log('Opponent moved to', row, col);
-}
-// Send move to opponent
-function sendMove(lastMove) {
-if (dataChannel && dataChannel.readyState === 'open') {
-dataChannel.send(JSON.stringify({
-type: 'move',
-board: board,
-currentTurn: currentTurn,
-lastMove: lastMove
-}));
-}
-}
-// Get possible moves (same as before)
-function getPossibleMoves(row, col) {
-let piece = board[row][col];
-if (!piece) return [];
-let moves = [];
-let isWhite = piece === piece.toUpperCase();
-let type = piece.toLowerCase();
-switch(type) {
-case 'p':
-let dir = isWhite ? -1 : 1;
-let startRow = isWhite ? 6 : 1;
-if (row + dir >= 0 && row + dir < 8 && !board[row + dir][col]) {
-moves.push([row + dir, col]);
-if (row === startRow && !board[row + 2*dir][col]) {
-moves.push([row + 2*dir, col]);
-}
-}
-for (let dc of [-1, 1]) {
-let newCol = col + dc;
-if (newCol >= 0 && newCol < 8 && row + dir >= 0 && row + dir < 8) {
-let target = board[row + dir][newCol];
-if (target && (target === target.toLowerCase()) === isWhite) {
-moves.push([row + dir, newCol]);
-}
-}
-}
-break;
-case 'r':
-case 'q':
-for (let [dr, dc] of [[-1,0], [1,0], [0,-1], [0,1]]) {
-for (let i = 1; i < 8; i++) {
-let r = row + dr * i;
-let c = col + dc * i;
-if (r < 0 || r >= 8 || c < 0 || c >= 8) break;
-if (!board[r][c]) {
-moves.push([r, c]);
-} else {
-if ((board[r][c] === board[r][c].toLowerCase()) === isWhite) {
-moves.push([r, c]);
-}
-break;
-}
-}
-}
-if (type === 'r') break;
-case 'b':
-case 'q':
-for (let [dr, dc] of [[-1,-1], [-1,1], [1,-1], [1,1]]) {
-for (let i = 1; i < 8; i++) {
-let r = row + dr * i;
-let c = col + dc * i;
-if (r < 0 || r >= 8 || c < 0 || c >= 8) break;
-if (!board[r][c]) {
-moves.push([r, c]);
-} else {
-if ((board[r][c] === board[r][c].toLowerCase()) === isWhite) {
-moves.push([r, c]);
-}
-break;
-}
-}
-}
-break;
-case 'n':
-let jumps = [[-2,-1], [-2,1], [-1,-2], [-1,2], [1,-2], [1,2], [2,-1], [2,1]];
-for (let [dr, dc] of jumps) {
-let r = row + dr;
-let c = col + dc;
-if (r >= 0 && r < 8 && c >= 0 && c < 8) {
-if (!board[r][c] || (board[r][c] === board[r][c].toLowerCase()) === isWhite) {
-moves.push([r, c]);
-}
-}
-}
-break;
-case 'k':
-for (let dr of [-1,0,1]) {
-for (let dc of [-1,0,1]) {
-if (dr === 0 && dc === 0) continue;
-let r = row + dr;
-let c = col + dc;
-if (r >= 0 && r < 8 && c >= 0 && c < 8) {
-if (!board[r][c] || (board[r][c] === board[r][c].toLowerCase()) === isWhite) {
-moves.push([r, c]);
-}
-}
-}
-}
-break;
-}
-return moves;
-}
-// Check if it's my turn
-function isMyTurn() {
-return (currentTurn === myColor);
-}
-// Handle square click
-function handleClick(row, col) {
-if (!isConnected) {
-alert('Connect to an opponent first!');
-return;
-}
-if (!isMyTurn()) {
-alert('Wait for your opponent to move!');
-return;
-}
-if (selectedRow === null) {
-// Select piece
-if (board[row][col] && isCorrectTurn(board[row][col])) {
-selectedRow = row;
-selectedCol = col;
-possibleMoves = getPossibleMoves(row, col);
-renderBoard();
-}
-return;
-}
-// Try to move
-let isValidMove = possibleMoves.some(([r, c]) => r === row && c === col);
-if (isValidMove) {
-// Record move
-let lastMove = {
-from: [selectedRow, selectedCol],
-to: [row, col],
-piece: board[selectedRow][selectedCol]
-};
-// Make move
-board[row][col] = board[selectedRow][selectedCol];
-board[selectedRow][selectedCol] = '';
-// Switch turns
-currentTurn = currentTurn === 'w' ? 'b' : 'w';
-// Send move to opponent
-sendMove(lastMove);
-}
-// Clear selection
-selectedRow = null;
-selectedCol = null;
-possibleMoves = [];
-renderBoard();
-updateUI();
-}
-// Check if piece belongs to current turn
-function isCorrectTurn(piece) {
-if (!piece) return false;
-let isWhite = piece === piece.toUpperCase();
-return (currentTurn === 'w' && isWhite) || (currentTurn === 'b' && !isWhite);
-}
-// Render board
-function renderBoard() {
-let html = '';
-for (let i = 0; i < 8; i++) {
-for (let j = 0; j < 8; j++) {
-let piece = board[i][j];
-let pieceChar = piece ? PIECES[piece] : '';
-let classes = `square ${(i + j) % 2 === 0 ? 'light' : 'dark'}`;
-if (selectedRow === i && selectedCol === j) {
-classes += ' selected';
-}
-if (possibleMoves.some(([r, c]) => r === i && c === j)) {
-classes += board[i][j] ? ' capture' : ' possible';
-}
-html += `<div class="${classes}" onclick="handleClick(${i}, ${j})">${pieceChar}</div>`;
-}
-}
-document.getElementById('chessboard').innerHTML = html;
-}
-// Update UI
-function updateUI() {
-// Update turn display
-const turnDisplay = document.getElementById('turnDisplay');
-turnDisplay.innerHTML = currentTurn === 'w' ? 'WHITE\'S TURN' : 'BLACK\'S TURN';
-turnDisplay.className = `turn-indicator ${currentTurn === 'w' ? 'white-turn' : 'black-turn'}`;
-// Update your color display
-document.getElementById('yourColorText').innerHTML = myColor === 'w' ? 'White' : 'Black';
-document.getElementById('yourColor').innerHTML = `
-<div class="player-color ${myColor === 'w' ? 'player-white' : 'player-black'}">${myColor === 'w' ? '♔' : '♚'}</div>
-<span>You are: <strong>${myColor === 'w' ? 'White' : 'Black'}</strong></span>
-`;
-}
-// Reset board
-function resetBoard() {
-board = JSON.parse(JSON.stringify(INITIAL_BOARD));
-currentTurn = 'w';
-selectedRow = null;
-selectedCol = null;
-possibleMoves = [];
-renderBoard();
-updateUI();
-// Send reset to opponent
-if (dataChannel && dataChannel.readyState === 'open') {
-dataChannel.send(JSON.stringify({
-type: 'reset'
-}));
-}
-}
-// Copy room code
-function copyRoomCode() {
-if (roomCode) {
-navigator.clipboard.writeText(roomCode);
-alert('Room code copied!');
-}
-}
-// Copy game link
-function copyLink() {
-const link = document.getElementById('gameLink');
-link.select();
-navigator.clipboard.writeText(link.value);
-document.getElementById('copyBtn').innerHTML = '✅ COPIED!';
-setTimeout(() => {
-document.getElementById('copyBtn').innerHTML = 'COPY';
-}, 2000);
-}
-// Check URL for room code
-function checkUrlForRoom() {
-const urlParams = new URLSearchParams(window.location.search);
-const room = urlParams.get('room');
-if (room) {
-document.getElementById('roomInput').value = room;
-setTimeout(() => joinRoom(), 500);
-}
-}
-// Initialize
-renderBoard();
-updateUI();
-checkUrlForRoom();
-</script>
+    <div class="game-container">
+        <div class="header">
+            <h1>♜ SIMPLE LIVE CHESS ♞</h1>
+        </div>
+        
+        <!-- Connection Area -->
+        <div class="connection-area">
+            <div class="button-grid">
+                <button onclick="createRoom()">🎮 CREATE ROOM</button>
+                <button onclick="joinRoomPrompt()">🔑 JOIN ROOM</button>
+            </div>
+            
+            <div id="roomDisplay" style="display: none;" class="room-display">
+                <div style="color: #c9b27e;">Your Room Code:</div>
+                <div class="room-code" id="roomCode">ABCD</div>
+                <button onclick="copyRoomCode()" style="width: 100%;">📋 COPY CODE</button>
+            </div>
+            
+            <div id="joinInput" style="display: none;" class="room-display">
+                <input type="text" id="joinCode" placeholder="Enter 6-digit code" style="width: 100%; padding: 15px; font-size: 1.5em; text-align: center; background: #2a2418; border: 2px solid #b88b4a; color: #ffd966; margin-bottom: 10px;">
+                <button onclick="joinRoom()" style="width: 100%;">CONNECT</button>
+            </div>
+            
+            <div id="connectionStatus" class="status disconnected">
+                🔴 Not connected
+            </div>
+        </div>
+        
+        <!-- Game Info -->
+        <div id="gameSection" style="display: none;">
+            <div class="turn-indicator turn-white" id="turnDisplay">
+                WHITE'S TURN
+            </div>
+            
+            <div style="text-align: center; margin: 10px 0; color: #c9b27e;">
+                <span id="opponentStatus">⏳ Waiting for opponent...</span>
+            </div>
+            
+            <!-- Chess Board -->
+            <div class="chess-board" id="chessboard"></div>
+            
+            <button onclick="resetBoard()" style="width: 100%; margin-top: 10px;">🔄 NEW GAME</button>
+        </div>
+        
+        <div class="footer">
+            <span class="online-dot"></span> Real-time • Direct connection • No server
+        </div>
+    </div>
+
+    <script>
+        // Chess pieces
+        const PIECES = {
+            'K': '♔', 'Q': '♕', 'R': '♖', 'B': '♗', 'N': '♘', 'P': '♙',
+            'k': '♚', 'q': '♛', 'r': '♜', 'b': '♝', 'n': '♞', 'p': '♟'
+        };
+        
+        // Starting board
+        const INITIAL_BOARD = [
+            ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
+            ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
+            ['', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', ''],
+            ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
+            ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']
+        ];
+        
+        // Game state
+        let board = JSON.parse(JSON.stringify(INITIAL_BOARD));
+        let currentTurn = 'w';
+        let selectedRow = null;
+        let selectedCol = null;
+        let possibleMoves = [];
+        
+        // Connection state
+        let myColor = null;
+        let roomCode = null;
+        let isConnected = false;
+        
+        // Simple signaling using localStorage (works for same browser)
+        // For different browsers/computers, we need a real signaling server
+        // This is a simplified version - in production you'd use a proper signaling server
+        
+        function createRoom() {
+            roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+            myColor = 'w';
+            
+            document.getElementById('roomDisplay').style.display = 'block';
+            document.getElementById('roomCode').innerText = roomCode;
+            document.getElementById('joinInput').style.display = 'none';
+            document.getElementById('connectionStatus').innerHTML = '🟡 Waiting for opponent to join...';
+            document.getElementById('connectionStatus').className = 'status waiting';
+            
+            // Start polling for opponent
+            startPolling();
+        }
+        
+        function joinRoomPrompt() {
+            document.getElementById('joinInput').style.display = 'block';
+            document.getElementById('roomDisplay').style.display = 'none';
+        }
+        
+        function joinRoom() {
+            const code = document.getElementById('joinCode').value.toUpperCase();
+            if (code.length < 4) {
+                alert('Enter a valid room code');
+                return;
+            }
+            
+            roomCode = code;
+            myColor = 'b';
+            
+            document.getElementById('connectionStatus').innerHTML = '🟡 Connecting to room...';
+            document.getElementById('connectionStatus').className = 'status waiting';
+            
+            // Notify host
+            localStorage.setItem('chess_join_' + roomCode, Date.now());
+            
+            // Start polling
+            startPolling();
+        }
+        
+        function startPolling() {
+            // Check for game updates every second
+            const interval = setInterval(() => {
+                // Check if opponent joined
+                const joinTime = localStorage.getItem('chess_join_' + roomCode);
+                if (joinTime && !isConnected) {
+                    isConnected = true;
+                    document.getElementById('connectionStatus').innerHTML = '🟢 Connected! Opponent joined';
+                    document.getElementById('connectionStatus').className = 'status connected';
+                    document.getElementById('gameSection').style.display = 'block';
+                    document.getElementById('opponentStatus').innerHTML = '<span class="online-dot"></span> Opponent online';
+                    
+                    // Send initial board
+                    saveGameState();
+                }
+                
+                // Check for moves
+                const saved = localStorage.getItem('chess_game_' + roomCode);
+                if (saved) {
+                    try {
+                        const data = JSON.parse(saved);
+                        if (data.board && JSON.stringify(board) !== JSON.stringify(data.board)) {
+                            // Opponent made a move
+                            board = data.board;
+                            currentTurn = data.currentTurn;
+                            selectedRow = null;
+                            selectedCol = null;
+                            possibleMoves = [];
+                            renderBoard();
+                            updateTurnDisplay();
+                        }
+                    } catch (e) {}
+                }
+            }, 1000);
+        }
+        
+        function saveGameState() {
+            localStorage.setItem('chess_game_' + roomCode, JSON.stringify({
+                board: board,
+                currentTurn: currentTurn
+            }));
+        }
+        
+        // Get possible moves
+        function getPossibleMoves(row, col) {
+            let piece = board[row][col];
+            if (!piece) return [];
+            
+            let moves = [];
+            let isWhite = piece === piece.toUpperCase();
+            let type = piece.toLowerCase();
+            
+            switch(type) {
+                case 'p':
+                    let dir = isWhite ? -1 : 1;
+                    let startRow = isWhite ? 6 : 1;
+                    
+                    if (row + dir >= 0 && row + dir < 8 && !board[row + dir][col]) {
+                        moves.push([row + dir, col]);
+                        if (row === startRow && !board[row + 2*dir][col]) {
+                            moves.push([row + 2*dir, col]);
+                        }
+                    }
+                    
+                    for (let dc of [-1, 1]) {
+                        let newCol = col + dc;
+                        if (newCol >= 0 && newCol < 8 && row + dir >= 0 && row + dir < 8) {
+                            let target = board[row + dir][newCol];
+                            if (target && (target === target.toLowerCase()) === isWhite) {
+                                moves.push([row + dir, newCol]);
+                            }
+                        }
+                    }
+                    break;
+                    
+                case 'r':
+                case 'q':
+                    for (let [dr, dc] of [[-1,0], [1,0], [0,-1], [0,1]]) {
+                        for (let i = 1; i < 8; i++) {
+                            let r = row + dr * i;
+                            let c = col + dc * i;
+                            if (r < 0 || r >= 8 || c < 0 || c >= 8) break;
+                            
+                            if (!board[r][c]) {
+                                moves.push([r, c]);
+                            } else {
+                                if ((board[r][c] === board[r][c].toLowerCase()) === isWhite) {
+                                    moves.push([r, c]);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    if (type === 'r') break;
+                    
+                case 'b':
+                case 'q':
+                    for (let [dr, dc] of [[-1,-1], [-1,1], [1,-1], [1,1]]) {
+                        for (let i = 1; i < 8; i++) {
+                            let r = row + dr * i;
+                            let c = col + dc * i;
+                            if (r < 0 || r >= 8 || c < 0 || c >= 8) break;
+                            
+                            if (!board[r][c]) {
+                                moves.push([r, c]);
+                            } else {
+                                if ((board[r][c] === board[r][c].toLowerCase()) === isWhite) {
+                                    moves.push([r, c]);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                    
+                case 'n':
+                    let jumps = [[-2,-1], [-2,1], [-1,-2], [-1,2], [1,-2], [1,2], [2,-1], [2,1]];
+                    for (let [dr, dc] of jumps) {
+                        let r = row + dr;
+                        let c = col + dc;
+                        if (r >= 0 && r < 8 && c >= 0 && c < 8) {
+                            if (!board[r][c] || (board[r][c] === board[r][c].toLowerCase()) === isWhite) {
+                                moves.push([r, c]);
+                            }
+                        }
+                    }
+                    break;
+                    
+                case 'k':
+                    for (let dr of [-1,0,1]) {
+                        for (let dc of [-1,0,1]) {
+                            if (dr === 0 && dc === 0) continue;
+                            let r = row + dr;
+                            let c = col + dc;
+                            if (r >= 0 && r < 8 && c >= 0 && c < 8) {
+                                if (!board[r][c] || (board[r][c] === board[r][c].toLowerCase()) === isWhite) {
+                                    moves.push([r, c]);
+                                }
+                            }
+                        }
+                    }
+                    break;
+            }
+            
+            return moves;
+        }
+        
+        function isMyTurn() {
+            if (!isConnected) return false;
+            return (currentTurn === myColor);
+        }
+        
+        function handleClick(row, col) {
+            if (!isConnected) {
+                alert('Connect to an opponent first!');
+                return;
+            }
+            
+            if (!isMyTurn()) {
+                alert('Wait for your opponent!');
+                return;
+            }
+            
+            if (selectedRow === null) {
+                // Select piece
+                let piece = board[row][col];
+                if (piece && ((myColor === 'w' && piece === piece.toUpperCase()) || 
+                             (myColor === 'b' && piece === piece.toLowerCase()))) {
+                    selectedRow = row;
+                    selectedCol = col;
+                    possibleMoves = getPossibleMoves(row, col);
+                    renderBoard();
+                }
+                return;
+            }
+            
+            // Try to move
+            let isValidMove = possibleMoves.some(([r, c]) => r === row && c === col);
+            
+            if (isValidMove) {
+                // Make move
+                board[row][col] = board[selectedRow][selectedCol];
+                board[selectedRow][selectedCol] = '';
+                
+                // Switch turns
+                currentTurn = currentTurn === 'w' ? 'b' : 'w';
+                
+                // Save to localStorage
+                saveGameState();
+            }
+            
+            // Clear selection
+            selectedRow = null;
+            selectedCol = null;
+            possibleMoves = [];
+            renderBoard();
+            updateTurnDisplay();
+        }
+        
+        function renderBoard() {
+            let html = '';
+            for (let i = 0; i < 8; i++) {
+                for (let j = 0; j < 8; j++) {
+                    let piece = board[i][j];
+                    let pieceChar = piece ? PIECES[piece] : '';
+                    
+                    let classes = `square ${(i + j) % 2 === 0 ? 'light' : 'dark'}`;
+                    
+                    if (selectedRow === i && selectedCol === j) {
+                        classes += ' selected';
+                    }
+                    
+                    if (possibleMoves.some(([r, c]) => r === i && c === j)) {
+                        classes += board[i][j] ? ' capture' : ' possible';
+                    }
+                    
+                    html += `<div class="${classes}" onclick="handleClick(${i}, ${j})">${pieceChar}</div>`;
+                }
+            }
+            document.getElementById('chessboard').innerHTML = html;
+        }
+        
+        function updateTurnDisplay() {
+            const turnDisplay = document.getElementById('turnDisplay');
+            turnDisplay.innerHTML = currentTurn === 'w' ? 'WHITE\'S TURN' : 'BLACK\'S TURN';
+            turnDisplay.className = `turn-indicator ${currentTurn === 'w' ? 'turn-white' : 'turn-black'}`;
+        }
+        
+        function resetBoard() {
+            board = JSON.parse(JSON.stringify(INITIAL_BOARD));
+            currentTurn = 'w';
+            selectedRow = null;
+            selectedCol = null;
+            possibleMoves = [];
+            renderBoard();
+            updateTurnDisplay();
+            saveGameState();
+        }
+        
+        function copyRoomCode() {
+            navigator.clipboard.writeText(roomCode);
+            alert('Room code copied! Share with your friend.');
+        }
+        
+        // Initial render
+        renderBoard();
+    </script>
 </body>
 </html>
