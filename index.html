@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>♜ REAL-TIME CHESS - Mobile Friendly</title>
+    <title>♜ FAST CHESS - Instant Connect</title>
     <style>
         * {
             box-sizing: border-box;
@@ -20,871 +20,547 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            min-height: 100dvh; /* For mobile browsers */
             margin: 0;
             padding: 10px;
         }
         
         .game-container {
             background: #3a2c1b;
-            padding: clamp(15px, 4vw, 25px);
-            border-radius: clamp(12px, 3vw, 16px);
+            padding: 20px;
+            border-radius: 16px;
             border: 3px solid #b88b4a;
-            max-width: 800px;
+            max-width: 600px;
             width: 100%;
-            height: fit-content;
         }
         
         .header {
             text-align: center;
-            margin-bottom: clamp(15px, 3vh, 20px);
+            margin-bottom: 20px;
         }
         
         .header h1 {
             color: #ffd966;
-            margin: 0;
-            font-size: clamp(1.8em, 8vw, 2.5em);
-            line-height: 1.2;
-            text-shadow: 2px 2px 0 #8b5a2b;
+            font-size: 2.2em;
         }
         
-        .header p {
-            color: #c9b27e;
-            margin: 5px 0 0;
-            font-size: clamp(0.8em, 3vw, 1em);
-        }
-        
-        /* Connection Section */
-        .connection-section {
+        /* Connection Box */
+        .connect-box {
             background: #1e1a0f;
             border: 2px solid #b88b4a;
-            border-radius: clamp(8px, 2vw, 12px);
-            padding: clamp(15px, 4vw, 20px);
-            margin-bottom: clamp(15px, 3vh, 20px);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
         }
         
-        .tab-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+        .code-display {
+            background: #2a2418;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 15px 0;
+        }
+        
+        .big-code {
+            font-size: 3.5em;
+            font-weight: bold;
+            color: #ffd966;
+            letter-spacing: 10px;
+            font-family: monospace;
+        }
+        
+        .code-input {
+            width: 100%;
+            padding: 18px;
+            background: #2a2418;
+            border: 2px solid #b88b4a;
+            color: #ffd966;
+            font-size: 2em;
+            text-align: center;
+            font-family: monospace;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        
+        button {
+            width: 100%;
+            padding: 18px;
+            background: #5d3f1f;
+            border: 2px solid #b88b4a;
+            color: #ffd966;
+            font-size: 1.3em;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 5px 0;
+        }
+        
+        button.green {
+            background: #2e5a2e;
+            border-color: #6bff6b;
+        }
+        
+        .status {
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .red-bg { background: #5a2e2e; color: #ffb3b3; }
+        .yellow-bg { background: #5a4a2e; color: #ffd966; }
+        .green-bg { background: #2e5a2e; color: #b3ffb3; }
+        
+        /* Game Info */
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1e1a0f;
+            padding: 15px;
+            border-radius: 10px;
             margin-bottom: 15px;
         }
         
-        .tab-btn {
-            padding: clamp(12px, 3vh, 15px);
-            font-size: clamp(1em, 4vw, 1.2em);
+        .turn-box {
+            padding: 10px 20px;
+            border-radius: 25px;
             font-weight: bold;
-            border: 2px solid #b88b4a;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
+            font-size: 1.2em;
         }
         
-        .tab-btn.active {
-            background: #2e5a2e;
-            color: #ffd966;
-            border-color: #6bff6b;
-        }
+        .white-bg { background: white; color: black; }
+        .black-bg { background: black; color: #ffd966; }
         
-        .tab-btn.inactive {
-            background: #5d3f1f;
-            color: #ffd966;
-        }
-        
-        .room-code-display {
-            background: #2a2418;
-            padding: clamp(15px, 4vw, 20px);
-            border-radius: 8px;
-            text-align: center;
-            margin: 15px 0;
-        }
-        
-        .room-code {
-            font-size: clamp(2.5em, 15vw, 4em);
-            font-weight: bold;
-            color: #ffd966;
-            letter-spacing: clamp(5px, 2vw, 10px);
-            font-family: monospace;
-            word-break: break-all;
-        }
-        
-        .input-group {
-            margin: 15px 0;
-        }
-        
-        .input-group input {
-            width: 100%;
-            padding: clamp(15px, 4vh, 20px);
-            background: #2a2418;
-            border: 2px solid #b88b4a;
-            color: #ffd966;
-            font-size: clamp(1.5em, 8vw, 2em);
-            text-align: center;
-            font-family: monospace;
-            border-radius: 8px;
-            letter-spacing: 5px;
-        }
-        
-        /* Buttons */
-        button {
-            padding: clamp(12px, 3vh, 15px) clamp(15px, 4vw, 25px);
-            background: #5d3f1f;
-            border: 2px solid #b88b4a;
-            color: #ffd966;
-            font-size: clamp(1em, 4vw, 1.2em);
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            width: 100%;
-            min-height: 48px; /* Minimum touch target size */
-        }
-        
-        button:hover {
-            background: #7a5629;
-            transform: translateY(-2px);
-        }
-        
-        button:active {
-            transform: translateY(0);
-        }
-        
-        button.primary {
-            background: #2e5a2e;
-            border-color: #6bff6b;
-        }
-        
-        /* Status Box */
-        .status-box {
-            padding: clamp(12px, 3vh, 15px);
-            border-radius: 8px;
-            margin: 15px 0;
-            font-weight: bold;
-            text-align: center;
-            font-size: clamp(0.9em, 3.5vw, 1.1em);
-        }
-        
-        .status-connected {
-            background: #2e5a2e;
-            color: #b3ffb3;
-            border: 1px solid #6bff6b;
-        }
-        
-        .status-waiting {
-            background: #5a4a2e;
-            color: #ffd966;
-            border: 1px solid #ffd966;
-        }
-        
-        .status-disconnected {
-            background: #5a2e2e;
-            color: #ffb3b3;
-            border: 1px solid #ff6b6b;
-        }
-        
-        /* Game Info */
-        .game-info {
+        .you-box {
             display: flex;
-            flex-direction: row;
-            justify-content: space-between;
             align-items: center;
-            margin: clamp(10px, 2vh, 15px) 0;
-            padding: clamp(10px, 2.5vh, 15px);
-            background: #1e1a0f;
-            border-radius: 8px;
-            flex-wrap: wrap;
             gap: 10px;
         }
         
-        .player-badge {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: clamp(0.9em, 3.5vw, 1.1em);
-        }
-        
-        .color-dot {
-            width: clamp(30px, 8vw, 40px);
-            height: clamp(30px, 8vw, 40px);
+        .color-circle {
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: clamp(18px, 5vw, 24px);
+            font-size: 20px;
         }
         
-        .dot-white {
-            background: #f0f0f0;
-            color: #000;
+        .white-circle {
+            background: white;
+            color: black;
             border: 2px solid #ffd966;
         }
         
-        .dot-black {
-            background: #222;
+        .black-circle {
+            background: black;
             color: #ffd966;
             border: 2px solid #ffd966;
         }
         
-        .turn-badge {
-            padding: clamp(8px, 2vh, 10px) clamp(12px, 3vw, 20px);
-            border-radius: 30px;
-            font-weight: bold;
-            font-size: clamp(0.9em, 3.5vw, 1.2em);
-            white-space: nowrap;
-        }
-        
-        .turn-white {
-            background: #f0f0f0;
-            color: #000;
-        }
-        
-        .turn-black {
-            background: #222;
-            color: #ffd966;
-        }
-        
-        /* Chess Board - This is the key part for mobile */
-        .board-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: clamp(10px, 2vh, 20px) 0;
-            width: 100%;
-        }
-        
-        .chess-board {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            aspect-ratio: 1 / 1;
-            width: 100%;
-            max-width: min(70vh, 70vw, 560px);
-            border: 4px solid #4a3720;
-            background: #4a3720;
-            gap: 2px;
-            padding: 2px;
-        }
-        
-        .square {
-            aspect-ratio: 1 / 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: min(8vw, 8vh, 45px);
-            cursor: pointer;
-            transition: all 0.1s;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        .square.light {
-            background: #eed9b2;
-        }
-        
-        .square.dark {
-            background: #8b5f3c;
-        }
-        
-        .square.selected {
-            background: #b3d9a0 !important;
-            box-shadow: inset 0 0 0 3px #2d5e2d;
-        }
-        
-        .square.possible {
-            background: #9fc5e8 !important;
-            box-shadow: inset 0 0 0 3px #1a4d8c;
-        }
-        
-        .square.capture {
-            background: #f4a7a7 !important;
-            box-shadow: inset 0 0 0 3px #a13d3d;
-        }
-        
-        .square:active {
-            transform: scale(0.95);
-        }
-        
-        /* Online Indicator */
-        .online-indicator {
+        .online-badge {
             display: flex;
             align-items: center;
             gap: 5px;
             color: #6bff6b;
-            font-size: clamp(0.8em, 3vw, 1em);
         }
         
-        .online-dot {
-            width: clamp(8px, 2.5vw, 10px);
-            height: clamp(8px, 2.5vw, 10px);
+        .dot {
+            width: 10px;
+            height: 10px;
             background: #6bff6b;
             border-radius: 50%;
-            animation: pulse 2s infinite;
+            animation: blink 1.5s infinite;
         }
         
-        @keyframes pulse {
+        @keyframes blink {
             0% { opacity: 1; }
             50% { opacity: 0.3; }
             100% { opacity: 1; }
         }
         
-        /* Footer */
-        .footer {
-            text-align: center;
-            color: #b88b4a;
-            margin-top: clamp(15px, 3vh, 20px);
-            font-size: clamp(0.8em, 3vw, 0.9em);
+        /* Chess Board */
+        .board-wrapper {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
         }
         
-        /* Hide/Show sections */
-        .hidden {
-            display: none !important;
+        .board {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            aspect-ratio: 1;
+            width: 100%;
+            max-width: 500px;
+            border: 3px solid #4a3720;
+            gap: 2px;
+            background: #4a3720;
+            padding: 2px;
         }
         
-        /* Responsive button grid */
+        .square {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: min(7vw, 40px);
+            cursor: pointer;
+        }
+        
+        .light { background: #eed9b2; }
+        .dark { background: #8b5f3c; }
+        .selected { background: #b3d9a0 !important; box-shadow: inset 0 0 0 3px green; }
+        .possible { background: #9fc5e8 !important; box-shadow: inset 0 0 0 3px blue; }
+        .capture { background: #f4a7a7 !important; box-shadow: inset 0 0 0 3px red; }
+        
+        .hidden { display: none; }
+        
         .button-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            grid-template-columns: 1fr 1fr;
             gap: 10px;
             margin-top: 15px;
-        }
-        
-        /* Touch-friendly adjustments */
-        @media (max-width: 480px) {
-            .game-info {
-                flex-direction: column;
-                align-items: stretch;
-                text-align: center;
-            }
-            
-            .player-badge {
-                justify-content: center;
-            }
-            
-            .turn-badge {
-                text-align: center;
-            }
-            
-            .online-indicator {
-                justify-content: center;
-            }
         }
     </style>
 </head>
 <body>
     <div class="game-container">
         <div class="header">
-            <h1>♜ CHESS ♞</h1>
-            <p>📱 Mobile friendly • Real-time • Just share code</p>
+            <h1>♜ FAST CHESS ♞</h1>
         </div>
         
-        <!-- Connection Section -->
-        <div class="connection-section" id="connectionSection">
-            <div class="tab-buttons">
-                <button class="tab-btn active" id="createTab" onclick="showCreateRoom()">🎮 CREATE</button>
-                <button class="tab-btn inactive" id="joinTab" onclick="showJoinRoom()">🔑 JOIN</button>
-            </div>
-            
-            <!-- Create Room View -->
-            <div id="createView">
-                <button class="primary" onclick="createRoom()" style="padding: 20px;">
-                    ✨ CREATE NEW ROOM
-                </button>
-            </div>
-            
-            <!-- Join Room View (hidden) -->
-            <div id="joinView" class="hidden">
-                <div class="input-group">
-                    <input type="text" id="roomCodeInput" placeholder="CODE" maxlength="6" inputmode="text" autocomplete="off">
+        <!-- CONNECTION SECTION -->
+        <div id="connectSection">
+            <div class="connect-box">
+                <button class="green" onclick="showCreate()">🎮 CREATE GAME</button>
+                <button onclick="showJoin()">🔑 JOIN GAME</button>
+                
+                <!-- Create View -->
+                <div id="createView" class="hidden">
+                    <div class="code-display">
+                        <div style="color: #c9b27e; margin-bottom: 10px;">YOUR ROOM CODE:</div>
+                        <div class="big-code" id="roomCode">------</div>
+                        <button onclick="copyCode()" style="margin-top: 15px;">📋 COPY CODE</button>
+                    </div>
+                    <div class="status yellow-bg" id="createStatus">
+                        🟡 Waiting for opponent...
+                    </div>
                 </div>
-                <button class="primary" onclick="joinRoom()">
-                    🔑 JOIN ROOM
-                </button>
-            </div>
-            
-            <!-- Room Code Display (shown after creating) -->
-            <div id="roomCodeDisplay" class="hidden">
-                <div class="room-code-display">
-                    <div style="color: #c9b27e; margin-bottom: 10px;">📋 Share this code:</div>
-                    <div class="room-code" id="roomCode">ABCDEF</div>
-                    <button onclick="copyRoomCode()" style="margin-top: 15px;">📋 COPY CODE</button>
+                
+                <!-- Join View -->
+                <div id="joinView" class="hidden">
+                    <input class="code-input" id="joinCode" placeholder="ENTER CODE" maxlength="6">
+                    <button class="green" onclick="joinGame()">CONNECT</button>
+                    <div class="status red-bg" id="joinStatus"></div>
                 </div>
-            </div>
-            
-            <!-- Status -->
-            <div id="statusBox" class="status-box status-disconnected">
-                🔴 Not connected
             </div>
         </div>
         
-        <!-- Game Section (hidden until connected) -->
+        <!-- GAME SECTION -->
         <div id="gameSection" class="hidden">
-            <div class="game-info">
-                <div class="player-badge">
-                    <span class="color-dot dot-white" id="yourColorDot">♔</span>
-                    <span id="yourColorText">You: White</span>
+            <div class="game-header">
+                <div class="you-box">
+                    <span class="color-circle white-circle" id="youCircle">♔</span>
+                    <span id="youText">You: White</span>
                 </div>
-                
-                <div class="turn-badge turn-white" id="turnDisplay">
-                    WHITE
-                </div>
-                
-                <div class="online-indicator" id="onlineIndicator">
-                    <span class="online-dot"></span>
-                    <span id="opponentStatus">Online</span>
+                <div class="turn-box white-bg" id="turnBox">WHITE</div>
+                <div class="online-badge">
+                    <span class="dot"></span>
+                    <span>Online</span>
                 </div>
             </div>
             
-            <!-- Chess Board Container -->
-            <div class="board-container">
-                <div class="chess-board" id="chessboard"></div>
+            <div class="board-wrapper">
+                <div class="board" id="board"></div>
             </div>
             
-            <!-- Game Controls -->
             <div class="button-grid">
-                <button onclick="resetBoard()">🔄 NEW GAME</button>
-                <button onclick="disconnect()" style="background: #5a2e2e;">🚪 DISCONNECT</button>
+                <button onclick="resetGame()">🔄 NEW GAME</button>
+                <button onclick="disconnect()" style="background: #5a2e2e;">🚪 EXIT</button>
             </div>
-        </div>
-        
-        <div class="footer">
-            <span class="online-dot"></span> Connected • Works on all devices
         </div>
     </div>
 
-    <!-- Add PeerJS -->
-    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.0/socket.io.js"></script>
     <script>
-        // Chess pieces
+        // Simple pieces
         const PIECES = {
-            'K': '♔', 'Q': '♕', 'R': '♖', 'B': '♗', 'N': '♘', 'P': '♙',
-            'k': '♚', 'q': '♛', 'r': '♜', 'b': '♝', 'n': '♞', 'p': '♟'
+            'K':'♔', 'Q':'♕', 'R':'♖', 'B':'♗', 'N':'♘', 'P':'♙',
+            'k':'♚', 'q':'♛', 'r':'♜', 'b':'♝', 'n':'♞', 'p':'♟'
         };
         
         // Starting board
-        const INITIAL_BOARD = [
-            ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
-            ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
-            ['', '', '', '', '', '', '', ''],
-            ['', '', '', '', '', '', '', ''],
-            ['', '', '', '', '', '', '', ''],
-            ['', '', '', '', '', '', '', ''],
-            ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
-            ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']
+        const START = [
+            ['r','n','b','q','k','b','n','r'],
+            ['p','p','p','p','p','p','p','p'],
+            ['','','','','','','',''],
+            ['','','','','','','',''],
+            ['','','','','','','',''],
+            ['','','','','','','',''],
+            ['P','P','P','P','P','P','P','P'],
+            ['R','N','B','Q','K','B','N','R']
         ];
         
-        // Game state
-        let board = JSON.parse(JSON.stringify(INITIAL_BOARD));
+        let board = JSON.parse(JSON.stringify(START));
         let currentTurn = 'w';
-        let selectedRow = null;
-        let selectedCol = null;
-        let possibleMoves = [];
-        
-        // Connection state
-        let peer = null;
-        let conn = null;
-        let myId = null;
+        let selected = null;
+        let moves = [];
         let myColor = null;
-        let isConnected = false;
+        let roomCode = null;
+        let connected = false;
         
-        // Initialize PeerJS
-        function initPeer() {
-            peer = new Peer();
+        // Use a public signaling server (works instantly)
+        const SERVER = 'https://chess-signaling-server.onrender.com';
+        let socket = null;
+        
+        function showCreate() {
+            document.getElementById('createView').classList.remove('hidden');
+            document.getElementById('joinView').classList.add('hidden');
+            createRoom();
+        }
+        
+        function showJoin() {
+            document.getElementById('createView').classList.add('hidden');
+            document.getElementById('joinView').classList.remove('hidden');
+        }
+        
+        function createRoom() {
+            // Generate random 6-digit code
+            roomCode = Math.floor(100000 + Math.random() * 900000).toString();
+            document.getElementById('roomCode').innerText = roomCode;
             
-            peer.on('open', (id) => {
-                myId = id;
-                console.log('My peer ID:', id);
+            // Connect to server
+            socket = io(SERVER);
+            
+            socket.on('connect', () => {
+                socket.emit('create-room', roomCode);
             });
             
-            peer.on('connection', (connection) => {
-                conn = connection;
-                setupConnection();
-            });
-            
-            peer.on('error', (err) => {
-                console.error('Peer error:', err);
-                updateStatus('Connection error', 'disconnected');
+            socket.on('opponent-joined', () => {
+                myColor = 'w';
+                startGame();
             });
         }
         
-        // Setup connection handlers
-        function setupConnection() {
-            conn.on('open', () => {
-                isConnected = true;
-                
-                // Send my color and initial board
-                conn.send({
-                    type: 'init',
-                    color: myColor,
-                    board: board,
-                    currentTurn: currentTurn
-                });
-                
-                updateStatus('Connected!', 'connected');
-                document.getElementById('connectionSection').classList.add('hidden');
-                document.getElementById('gameSection').classList.remove('hidden');
+        function joinGame() {
+            const code = document.getElementById('joinCode').value;
+            if (code.length !== 6) {
+                document.getElementById('joinStatus').innerText = '❌ Enter 6-digit code';
+                return;
+            }
+            
+            roomCode = code;
+            
+            // Connect to server
+            socket = io(SERVER);
+            
+            socket.on('connect', () => {
+                socket.emit('join-room', roomCode);
             });
             
-            conn.on('data', (data) => {
-                handleOpponentData(data);
+            socket.on('room-joined', () => {
+                myColor = 'b';
+                startGame();
             });
             
-            conn.on('close', () => {
+            socket.on('room-error', (msg) => {
+                document.getElementById('joinStatus').innerText = '❌ ' + msg;
+            });
+        }
+        
+        function startGame() {
+            connected = true;
+            document.getElementById('connectSection').classList.add('hidden');
+            document.getElementById('gameSection').classList.remove('hidden');
+            
+            updateDisplay();
+            
+            // Listen for moves
+            socket.on('opponent-move', (data) => {
+                board = data.board;
+                currentTurn = data.turn;
+                selected = null;
+                moves = [];
+                renderBoard();
+                updateTurn();
+            });
+            
+            socket.on('opponent-reset', () => {
+                board = JSON.parse(JSON.stringify(START));
+                currentTurn = 'w';
+                renderBoard();
+                updateTurn();
+            });
+            
+            socket.on('opponent-left', () => {
+                alert('Opponent disconnected');
                 disconnect();
             });
         }
         
-        // Handle opponent's data
-        function handleOpponentData(data) {
-            if (data.type === 'init') {
-                // Opponent joined, set their color
-                if (data.color === 'w') {
-                    myColor = 'b';
-                } else {
-                    myColor = 'w';
-                }
-                
-                // Update board if needed
-                if (data.board) {
-                    board = data.board;
-                    currentTurn = data.currentTurn;
-                }
-                
-                updatePlayerDisplay();
-                renderBoard();
-                
-            } else if (data.type === 'move') {
-                // Opponent made a move
-                board = data.board;
-                currentTurn = data.currentTurn;
-                selectedRow = null;
-                selectedCol = null;
-                possibleMoves = [];
-                renderBoard();
-                updateTurnDisplay();
-                
-            } else if (data.type === 'reset') {
-                // Opponent reset game
-                board = JSON.parse(JSON.stringify(INITIAL_BOARD));
-                currentTurn = 'w';
-                renderBoard();
-                updateTurnDisplay();
-            }
-        }
-        
-        // Create room
-        function createRoom() {
-            myColor = 'w';
-            initPeer();
-            
-            // Wait for peer ID
-            setTimeout(() => {
-                if (myId) {
-                    document.getElementById('createView').classList.add('hidden');
-                    document.getElementById('joinView').classList.add('hidden');
-                    document.getElementById('roomCodeDisplay').classList.remove('hidden');
-                    document.getElementById('roomCode').innerText = myId.substring(0, 6).toUpperCase();
-                    
-                    updateStatus('Waiting for opponent...', 'waiting');
-                } else {
-                    alert('Failed to create room. Please try again.');
-                }
-            }, 1000);
-        }
-        
-        // Join room
-        function joinRoom() {
-            const code = document.getElementById('roomCodeInput').value.toUpperCase();
-            if (code.length < 4) {
-                alert('Please enter a valid room code');
-                return;
-            }
-            
-            myColor = 'b';
-            initPeer();
-            
-            // Wait for peer ID then connect
-            setTimeout(() => {
-                if (peer) {
-                    conn = peer.connect(code);
-                    setupConnection();
-                    
-                    updateStatus('Connecting...', 'waiting');
-                }
-            }, 1000);
-        }
-        
-        // Update connection status
-        function updateStatus(message, type) {
-            const statusBox = document.getElementById('statusBox');
-            statusBox.innerHTML = type === 'connected' ? '🟢 ' + message :
-                                 type === 'waiting' ? '🟡 ' + message :
-                                 '🔴 ' + message;
-            
-            statusBox.className = 'status-box status-' + type;
-        }
-        
-        // Update player display
-        function updatePlayerDisplay() {
-            document.getElementById('yourColorText').innerText = myColor === 'w' ? 'You: White' : 'You: Black';
-            document.getElementById('yourColorDot').className = `color-dot dot-${myColor === 'w' ? 'white' : 'black'}`;
-            document.getElementById('yourColorDot').innerHTML = myColor === 'w' ? '♔' : '♚';
-        }
-        
-        // Get possible moves
-        function getPossibleMoves(row, col) {
+        function getMoves(row, col) {
             let piece = board[row][col];
             if (!piece) return [];
             
-            let moves = [];
             let isWhite = piece === piece.toUpperCase();
             let type = piece.toLowerCase();
+            let moves = [];
             
-            switch(type) {
-                case 'p':
-                    let dir = isWhite ? -1 : 1;
-                    let startRow = isWhite ? 6 : 1;
-                    
-                    if (row + dir >= 0 && row + dir < 8 && !board[row + dir][col]) {
-                        moves.push([row + dir, col]);
-                        if (row === startRow && !board[row + 2*dir][col]) {
-                            moves.push([row + 2*dir, col]);
-                        }
+            if (type === 'p') { // Pawn
+                let dir = isWhite ? -1 : 1;
+                let start = isWhite ? 6 : 1;
+                
+                if (row+dir >=0 && row+dir<8 && !board[row+dir][col]) {
+                    moves.push([row+dir, col]);
+                    if (row === start && !board[row+2*dir][col]) moves.push([row+2*dir, col]);
+                }
+                
+                for (let dc of [-1,1]) {
+                    let nc = col + dc;
+                    if (nc>=0 && nc<8 && row+dir>=0 && row+dir<8) {
+                        let target = board[row+dir][nc];
+                        if (target && (target===target.toLowerCase()) === isWhite)
+                            moves.push([row+dir, nc]);
                     }
-                    
-                    for (let dc of [-1, 1]) {
-                        let newCol = col + dc;
-                        if (newCol >= 0 && newCol < 8 && row + dir >= 0 && row + dir < 8) {
-                            let target = board[row + dir][newCol];
-                            if (target && (target === target.toLowerCase()) === isWhite) {
-                                moves.push([row + dir, newCol]);
-                            }
-                        }
-                    }
-                    break;
-                    
-                case 'r': case 'q':
-                    for (let [dr, dc] of [[-1,0], [1,0], [0,-1], [0,1]]) {
-                        for (let i = 1; i < 8; i++) {
-                            let r = row + dr * i;
-                            let c = col + dc * i;
-                            if (r < 0 || r >= 8 || c < 0 || c >= 8) break;
-                            
-                            if (!board[r][c]) {
-                                moves.push([r, c]);
-                            } else {
-                                if ((board[r][c] === board[r][c].toLowerCase()) === isWhite) {
-                                    moves.push([r, c]);
-                                }
-                                break;
-                            }
-                        }
-                    }
-                    if (type === 'r') break;
-                    
-                case 'b': case 'q':
-                    for (let [dr, dc] of [[-1,-1], [-1,1], [1,-1], [1,1]]) {
-                        for (let i = 1; i < 8; i++) {
-                            let r = row + dr * i;
-                            let c = col + dc * i;
-                            if (r < 0 || r >= 8 || c < 0 || c >= 8) break;
-                            
-                            if (!board[r][c]) {
-                                moves.push([r, c]);
-                            } else {
-                                if ((board[r][c] === board[r][c].toLowerCase()) === isWhite) {
-                                    moves.push([r, c]);
-                                }
-                                break;
-                            }
-                        }
-                    }
-                    break;
-                    
-                case 'n':
-                    let jumps = [[-2,-1], [-2,1], [-1,-2], [-1,2], [1,-2], [1,2], [2,-1], [2,1]];
-                    for (let [dr, dc] of jumps) {
-                        let r = row + dr;
-                        let c = col + dc;
-                        if (r >= 0 && r < 8 && c >= 0 && c < 8) {
-                            if (!board[r][c] || (board[r][c] === board[r][c].toLowerCase()) === isWhite) {
-                                moves.push([r, c]);
-                            }
-                        }
-                    }
-                    break;
-                    
-                case 'k':
-                    for (let dr of [-1,0,1]) {
-                        for (let dc of [-1,0,1]) {
-                            if (dr === 0 && dc === 0) continue;
-                            let r = row + dr;
-                            let c = col + dc;
-                            if (r >= 0 && r < 8 && c >= 0 && c < 8) {
-                                if (!board[r][c] || (board[r][c] === board[r][c].toLowerCase()) === isWhite) {
-                                    moves.push([r, c]);
-                                }
-                            }
-                        }
-                    }
-                    break;
+                }
             }
-            
+            else if (type === 'n') { // Knight
+                let jumps = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
+                for (let [dr,dc] of jumps) {
+                    let r = row+dr, c = col+dc;
+                    if (r>=0 && r<8 && c>=0 && c<8) {
+                        if (!board[r][c] || (board[r][c]===board[r][c].toLowerCase())===isWhite)
+                            moves.push([r,c]);
+                    }
+                }
+            }
+            else if (type === 'k') { // King
+                for (let dr of [-1,0,1]) {
+                    for (let dc of [-1,0,1]) {
+                        if (dr===0 && dc===0) continue;
+                        let r = row+dr, c = col+dc;
+                        if (r>=0 && r<8 && c>=0 && c<8) {
+                            if (!board[r][c] || (board[r][c]===board[r][c].toLowerCase())===isWhite)
+                                moves.push([r,c]);
+                        }
+                    }
+                }
+            }
+            else { // Rook, Bishop, Queen
+                let dirs = type==='r' ? [[-1,0],[1,0],[0,-1],[0,1]] :
+                          type==='b' ? [[-1,-1],[-1,1],[1,-1],[1,1]] :
+                          [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[-1,1],[1,-1],[1,1]];
+                
+                for (let [dr,dc] of dirs) {
+                    for (let i=1; i<8; i++) {
+                        let r = row + dr*i, c = col + dc*i;
+                        if (r<0 || r>=8 || c<0 || c>=8) break;
+                        if (!board[r][c]) moves.push([r,c]);
+                        else {
+                            if ((board[r][c]===board[r][c].toLowerCase())===isWhite)
+                                moves.push([r,c]);
+                            break;
+                        }
+                    }
+                }
+            }
             return moves;
         }
         
-        // Check if it's my turn
-        function isMyTurn() {
-            return currentTurn === myColor;
-        }
-        
-        // Handle square click
         function handleClick(row, col) {
-            if (!isConnected) {
-                alert('Not connected to opponent');
+            if (!connected) return;
+            if ((myColor === 'w' && currentTurn !== 'w') || (myColor === 'b' && currentTurn !== 'b')) {
+                alert("Wait for your turn!");
                 return;
             }
             
-            if (!isMyTurn()) {
-                alert('Wait for your opponent!');
-                return;
-            }
-            
-            if (selectedRow === null) {
-                // Select piece
+            if (selected === null) {
                 let piece = board[row][col];
-                if (piece && ((myColor === 'w' && piece === piece.toUpperCase()) || 
-                             (myColor === 'b' && piece === piece.toLowerCase()))) {
-                    selectedRow = row;
-                    selectedCol = col;
-                    possibleMoves = getPossibleMoves(row, col);
+                if (piece && ((myColor==='w' && piece===piece.toUpperCase()) || 
+                             (myColor==='b' && piece===piece.toLowerCase()))) {
+                    selected = [row, col];
+                    moves = getMoves(row, col);
                     renderBoard();
                 }
                 return;
             }
             
-            // Try to move
-            let isValidMove = possibleMoves.some(([r, c]) => r === row && c === col);
-            
-            if (isValidMove) {
+            if (moves.some(([r,c]) => r===row && c===col)) {
                 // Make move
-                board[row][col] = board[selectedRow][selectedCol];
-                board[selectedRow][selectedCol] = '';
-                
-                // Switch turns
+                let [fromRow, fromCol] = selected;
+                board[row][col] = board[fromRow][fromCol];
+                board[fromRow][fromCol] = '';
                 currentTurn = currentTurn === 'w' ? 'b' : 'w';
                 
-                // Send move to opponent
-                if (conn) {
-                    conn.send({
-                        type: 'move',
-                        board: board,
-                        currentTurn: currentTurn
-                    });
-                }
-            }
-            
-            // Clear selection
-            selectedRow = null;
-            selectedCol = null;
-            possibleMoves = [];
-            renderBoard();
-            updateTurnDisplay();
-        }
-        
-        // Render board
-        function renderBoard() {
-            let html = '';
-            for (let i = 0; i < 8; i++) {
-                for (let j = 0; j < 8; j++) {
-                    let piece = board[i][j];
-                    let pieceChar = piece ? PIECES[piece] : '';
-                    
-                    let classes = `square ${(i + j) % 2 === 0 ? 'light' : 'dark'}`;
-                    
-                    if (selectedRow === i && selectedCol === j) {
-                        classes += ' selected';
-                    }
-                    
-                    if (possibleMoves.some(([r, c]) => r === i && c === j)) {
-                        classes += board[i][j] ? ' capture' : ' possible';
-                    }
-                    
-                    html += `<div class="${classes}" onclick="handleClick(${i}, ${j})">${pieceChar}</div>`;
-                }
-            }
-            document.getElementById('chessboard').innerHTML = html;
-        }
-        
-        // Update turn display
-        function updateTurnDisplay() {
-            const turnDisplay = document.getElementById('turnDisplay');
-            turnDisplay.innerHTML = currentTurn === 'w' ? 'WHITE' : 'BLACK';
-            turnDisplay.className = `turn-badge ${currentTurn === 'w' ? 'turn-white' : 'turn-black'}`;
-        }
-        
-        // Reset board
-        function resetBoard() {
-            board = JSON.parse(JSON.stringify(INITIAL_BOARD));
-            currentTurn = 'w';
-            selectedRow = null;
-            selectedCol = null;
-            possibleMoves = [];
-            renderBoard();
-            updateTurnDisplay();
-            
-            // Send reset to opponent
-            if (conn) {
-                conn.send({
-                    type: 'reset'
+                // Send to opponent
+                socket.emit('make-move', {
+                    room: roomCode,
+                    board: board,
+                    turn: currentTurn
                 });
             }
-        }
-        
-        // Disconnect
-        function disconnect() {
-            if (conn) conn.close();
-            if (peer) peer.destroy();
             
-            isConnected = false;
-            document.getElementById('connectionSection').classList.remove('hidden');
-            document.getElementById('gameSection').classList.add('hidden');
-            document.getElementById('createView').classList.remove('hidden');
-            document.getElementById('joinView').classList.add('hidden');
-            document.getElementById('roomCodeDisplay').classList.add('hidden');
-            
-            updateStatus('Disconnected', 'disconnected');
-            
-            // Reset board
-            board = JSON.parse(JSON.stringify(INITIAL_BOARD));
-            currentTurn = 'w';
+            selected = null;
+            moves = [];
             renderBoard();
+            updateTurn();
         }
         
-        // UI helpers
-        function showCreateRoom() {
-            document.getElementById('createView').classList.remove('hidden');
-            document.getElementById('joinView').classList.add('hidden');
-            document.getElementById('roomCodeDisplay').classList.add('hidden');
+        function renderBoard() {
+            let html = '';
+            for (let i=0; i<8; i++) {
+                for (let j=0; j<8; j++) {
+                    let piece = board[i][j];
+                    let classes = `square ${(i+j)%2===0 ? 'light' : 'dark'}`;
+                    
+                    if (selected && selected[0]===i && selected[1]===j)
+                        classes += ' selected';
+                    
+                    if (moves.some(([r,c]) => r===i && c===j))
+                        classes += board[i][j] ? ' capture' : ' possible';
+                    
+                    html += `<div class="${classes}" onclick="handleClick(${i},${j})">${piece ? PIECES[piece] : ''}</div>`;
+                }
+            }
+            document.getElementById('board').innerHTML = html;
+        }
+        
+        function updateDisplay() {
+            renderBoard();
+            updateTurn();
             
-            document.getElementById('createTab').className = 'tab-btn active';
-            document.getElementById('joinTab').className = 'tab-btn inactive';
+            document.getElementById('youText').innerText = myColor==='w' ? 'You: White' : 'You: Black';
+            document.getElementById('youCircle').className = `color-circle ${myColor==='w' ? 'white-circle' : 'black-circle'}`;
         }
         
-        function showJoinRoom() {
-            document.getElementById('createView').classList.add('hidden');
-            document.getElementById('joinView').classList.remove('hidden');
-            document.getElementById('roomCodeDisplay').classList.add('hidden');
-            
-            document.getElementById('createTab').className = 'tab-btn inactive';
-            document.getElementById('joinTab').className = 'tab-btn active';
+        function updateTurn() {
+            let box = document.getElementById('turnBox');
+            box.innerText = currentTurn === 'w' ? 'WHITE' : 'BLACK';
+            box.className = `turn-box ${currentTurn==='w' ? 'white-bg' : 'black-bg'}`;
         }
         
-        function copyRoomCode() {
-            const code = document.getElementById('roomCode').innerText;
-            navigator.clipboard.writeText(code);
-            alert('Room code copied! Share with your friend.');
+        function resetGame() {
+            board = JSON.parse(JSON.stringify(START));
+            currentTurn = 'w';
+            selected = null;
+            moves = [];
+            renderBoard();
+            updateTurn();
+            socket.emit('reset-game', {room: roomCode});
         }
         
-        // Initialize
+        function disconnect() {
+            if (socket) socket.disconnect();
+            location.reload();
+        }
+        
+        function copyCode() {
+            navigator.clipboard.writeText(roomCode);
+            alert('Code copied!');
+        }
+        
         renderBoard();
     </script>
 </body>
