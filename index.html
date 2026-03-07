@@ -208,6 +208,8 @@
             ['R','N','B','Q','K','B','N','R']
         ];
         
+        // Replace the ENTIRE script from line 200 to the end with this:
+
         // GAME VARIABLES
         let board = JSON.parse(JSON.stringify(START));
         let turn = 'w';
@@ -215,47 +217,39 @@
         let moves = [];
         let myColor = null;
         let roomCode = null;
-        
-        // USING FIREBASE (FREE, FAST, RELIABLE)
-        const FIREBASE_URL = 'https://chess-50c7b-default-rtdb.firebaseio.com/';
+        let checkInterval = null;
         
         function createGame() {
-            // Generate 6-digit code
             roomCode = Math.floor(100000 + Math.random() * 900000).toString();
             
-            // Hide join view
             document.getElementById('joinDiv').classList.add('hidden');
             
-            // Show waiting message
             const statusDiv = document.createElement('div');
             statusDiv.className = 'status waiting';
             statusDiv.id = 'waitingMsg';
             statusDiv.innerHTML = `🟡 YOUR CODE: <strong style="font-size:2em; display:block; margin:10px;">${roomCode}</strong> Waiting for friend to join...`;
             document.querySelector('.connect-box').appendChild(statusDiv);
             
-            // Save to Firebase
-            fetch(FIREBASE_URL + 'games/' + roomCode + '.json', {
-                method: 'PUT',
-                body: JSON.stringify({
-                    board: board,
-                    turn: turn,
-                    player1: 'waiting',
-                    player2: null
-                })
-            });
+            // Save to localStorage instead of Firebase
+            localStorage.setItem('game_' + roomCode, JSON.stringify({
+                board: board,
+                turn: turn,
+                players: 1,
+                created: Date.now()
+            }));
             
-            // Check every 2 seconds if someone joined
-            let checkInterval = setInterval(() => {
-                fetch(FIREBASE_URL + 'games/' + roomCode + '/player2.json')
-                    .then(r => r.json())
-                    .then(data => {
-                        if (data === 'joined') {
-                            clearInterval(checkInterval);
-                            myColor = 'w';
-                            startGame();
-                        }
-                    });
-            }, 2000);
+            // Check if someone joined
+            checkInterval = setInterval(() => {
+                let gameData = localStorage.getItem('game_' + roomCode);
+                if (gameData) {
+                    let game = JSON.parse(gameData);
+                    if (game.players === 2) {
+                        clearInterval(checkInterval);
+                        myColor = 'w';
+                        startGame();
+                    }
+                }
+            }, 1000);
         }
         
         function showJoin() {
@@ -271,57 +265,54 @@
             
             roomCode = code;
             
-            // Check if game exists
-            fetch(FIREBASE_URL + 'games/' + code + '.json')
-                .then(r => r.json())
-                .then(data => {
-                    if (!data) {
-                        document.getElementById('joinMsg').innerHTML = '❌ Room not found';
-                        return;
-                    }
-                    
-                    // Load board
-                    board = data.board;
-                    turn = data.turn;
-                    
-                    // Mark player2 as joined
-                    fetch(FIREBASE_URL + 'games/' + code + '/player2.json', {
-                        method: 'PUT',
-                        body: JSON.stringify('joined')
-                    });
-                    
-                    myColor = 'b';
-                    startGame();
-                });
+            // Check if game exists in localStorage
+            let gameData = localStorage.getItem('game_' + code);
+            if (!gameData) {
+                document.getElementById('joinMsg').innerHTML = '❌ Room not found';
+                return;
+            }
+            
+            let game = JSON.parse(gameData);
+            
+            // Load board
+            board = game.board;
+            turn = game.turn;
+            
+            // Update to 2 players
+            game.players = 2;
+            localStorage.setItem('game_' + code, JSON.stringify(game));
+            
+            myColor = 'b';
+            startGame();
         }
         
         function startGame() {
-            // Hide connect, show game
             document.getElementById('connectSection').classList.add('hidden');
             document.getElementById('gameSection').classList.remove('hidden');
             
-            // Update player info
             document.getElementById('playerLabel').innerText = myColor === 'w' ? 'You: White' : 'You: Black';
             
             renderBoard();
             updateTurn();
             
             // Listen for opponent moves
-            setInterval(() => {
-                fetch(FIREBASE_URL + 'games/' + roomCode + '.json')
-                    .then(r => r.json())
-                    .then(data => {
-                        if (data && JSON.stringify(data.board) !== JSON.stringify(board)) {
-                            board = data.board;
-                            turn = data.turn;
-                            selected = null;
-                            moves = [];
-                            renderBoard();
-                            updateTurn();
-                        }
-                    });
-            }, 2000);
+            checkInterval = setInterval(() => {
+                let gameData = localStorage.getItem('game_' + roomCode);
+                if (gameData) {
+                    let game = JSON.parse(gameData);
+                    if (JSON.stringify(game.board) !== JSON.stringify(board)) {
+                        board = game.board;
+                        turn = game.turn;
+                        selected = null;
+                        moves = [];
+                        renderBoard();
+                        updateTurn();
+                    }
+                }
+            }, 1000);
         }
+        
+        // Rest of your functions (getMoves, handleClick, etc.) remain the same
         
         function getMoves(row, col) {
             let piece = board[row][col];
