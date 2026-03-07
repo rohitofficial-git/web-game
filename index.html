@@ -219,26 +219,46 @@
         let roomCode = null;
         let checkInterval = null;
         
+        // At the VERY TOP of your script (after variables):
+        window.addEventListener('load', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const codeFromUrl = urlParams.get('code');
+            
+            if (codeFromUrl) {
+                document.getElementById('codeInput').value = codeFromUrl;
+                // Optional - auto join
+                setTimeout(() => {
+                    if (document.getElementById('joinGame')) {
+                        joinGame();
+                    }
+                }, 500);
+            }
+        });
+
+       // In your createGame function:
         function createGame() {
             roomCode = Math.floor(100000 + Math.random() * 900000).toString();
             
+            // THIS MAKES URL CHANGE
+            window.history.pushState({}, '', '?code=' + roomCode);
+            
+            // Rest of your createGame code...
             document.getElementById('joinDiv').classList.add('hidden');
             
             const statusDiv = document.createElement('div');
             statusDiv.className = 'status waiting';
             statusDiv.id = 'waitingMsg';
-            statusDiv.innerHTML = `🟡 YOUR CODE: <strong style="font-size:2em; display:block; margin:10px;">${roomCode}</strong> Waiting for friend to join...`;
+            statusDiv.innerHTML = '🟡 YOUR CODE: <strong style="font-size:2em; display:block; margin:10px;">${roomCode}</strong> Waiting for friend to join...';
             document.querySelector('.connect-box').appendChild(statusDiv);
             
-            // Save to localStorage instead of Firebase
+            // Save to localStorage
             localStorage.setItem('game_' + roomCode, JSON.stringify({
                 board: board,
                 turn: turn,
-                players: 1,
-                created: Date.now()
+                players: 1
             }));
             
-            // Check if someone joined
+            // Check for joiner
             checkInterval = setInterval(() => {
                 let gameData = localStorage.getItem('game_' + roomCode);
                 if (gameData) {
