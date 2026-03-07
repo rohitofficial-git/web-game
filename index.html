@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>♜ REMOTE CHESS - Works Anywhere</title>
+    <title>♜ CHESS - SIMPLE & WORKS</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            user-select: none;
         }
         
         body {
             background: #2d2a1e;
-            font-family: 'Courier New', monospace;
+            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -22,7 +21,7 @@
             padding: 10px;
         }
         
-        .container {
+        .game-box {
             background: #3a2c1b;
             padding: 20px;
             border-radius: 20px;
@@ -37,15 +36,14 @@
             margin-bottom: 20px;
         }
         
-        .box {
+        .connect-box {
             background: #1e1a0f;
             border: 2px solid #b88b4a;
             border-radius: 12px;
             padding: 20px;
-            margin-bottom: 20px;
         }
         
-        .code-area {
+        .code-box {
             background: #2a2418;
             padding: 20px;
             border-radius: 10px;
@@ -58,7 +56,6 @@
             font-weight: bold;
             color: #ffd966;
             letter-spacing: 10px;
-            font-family: monospace;
         }
         
         input {
@@ -81,22 +78,20 @@
             border: 2px solid #b88b4a;
             color: #ffd966;
             font-size: 1.3em;
-            font-weight: bold;
             border-radius: 10px;
             cursor: pointer;
         }
         
-        button.green {
+        .green-btn {
             background: #2e5a2e;
-            border-color: #6bff6b;
         }
         
         .status {
             padding: 12px;
             border-radius: 8px;
             text-align: center;
-            font-weight: bold;
             margin: 10px 0;
+            font-weight: bold;
         }
         
         .waiting { background: #5a4a2e; color: #ffd966; }
@@ -106,55 +101,21 @@
         .game-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             background: #1e1a0f;
             padding: 15px;
             border-radius: 10px;
             margin-bottom: 15px;
+            color: #ffd966;
         }
         
-        .turn-box {
-            padding: 10px 20px;
-            border-radius: 25px;
+        .turn {
+            padding: 8px 16px;
+            border-radius: 20px;
             font-weight: bold;
         }
         
         .white-turn { background: white; color: black; }
         .black-turn { background: black; color: #ffd966; }
-        
-        .player-badge {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .color-circle {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid #ffd966;
-        }
-        
-        .white-circle { background: white; color: black; }
-        .black-circle { background: black; color: #ffd966; }
-        
-        .online-dot {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            background: #6bff6b;
-            border-radius: 50%;
-            animation: blink 1.5s infinite;
-        }
-        
-        @keyframes blink {
-            0% { opacity: 1; }
-            50% { opacity: 0.3; }
-            100% { opacity: 1; }
-        }
         
         .board {
             display: grid;
@@ -178,13 +139,13 @@
         
         .light { background: #eed9b2; }
         .dark { background: #8b5f3c; }
-        .selected { background: #b3d9a0 !important; outline: 3px solid green; }
-        .possible { background: #9fc5e8 !important; outline: 3px solid blue; }
-        .capture { background: #f4a7a7 !important; outline: 3px solid red; }
+        .selected { background: #b3d9a0 !important; }
+        .possible { background: #9fc5e8 !important; }
+        .capture { background: #f4a7a7 !important; }
         
         .hidden { display: none; }
         
-        .row {
+        .flex {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
@@ -193,54 +154,35 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>♜ REMOTE CHESS ♞</h1>
+    <div class="game-box">
+        <h1>♜ SIMPLE CHESS ♞</h1>
         
-        <!-- CONNECT SCREEN -->
-        <div id="connectScreen">
-            <div class="box">
-                <button class="green" onclick="showCreate()">🎮 CREATE GAME</button>
+        <!-- CONNECT SECTION -->
+        <div id="connectSection">
+            <div class="connect-box">
+                <button class="green-btn" onclick="createGame()">🎮 CREATE GAME</button>
                 <button onclick="showJoin()">🔑 JOIN GAME</button>
                 
-                <!-- CREATE VIEW -->
-                <div id="createView" class="hidden">
-                    <div class="code-area">
-                        <div style="color: #c9b27e;">Share this 6-digit code:</div>
-                        <div class="big-code" id="roomCode">------</div>
-                        <button onclick="copyCode()" style="margin-top: 15px;">📋 COPY CODE</button>
-                    </div>
-                    <div class="status waiting" id="waitingStatus">
-                        ⏳ Waiting for friend to join...
-                    </div>
-                    <p style="color: #c9b27e; text-align: center;">Tell your friend to enter this code</p>
-                </div>
-                
-                <!-- JOIN VIEW -->
-                <div id="joinView" class="hidden">
-                    <input type="text" id="codeInput" placeholder="ENTER 6-DIGIT CODE" maxlength="6">
-                    <button class="green" onclick="joinGame()">🔌 CONNECT</button>
-                    <div class="status error" id="joinStatus"></div>
+                <!-- JOIN VIEW (hidden initially) -->
+                <div id="joinDiv" class="hidden">
+                    <input type="text" id="codeInput" placeholder="ENTER 6-DIGIT CODE">
+                    <button class="green-btn" onclick="joinGame()">CONNECT</button>
+                    <div class="status error" id="joinMsg"></div>
                 </div>
             </div>
         </div>
         
-        <!-- GAME SCREEN -->
-        <div id="gameScreen" class="hidden">
+        <!-- GAME SECTION (hidden initially) -->
+        <div id="gameSection" class="hidden">
             <div class="game-header">
-                <div class="player-badge">
-                    <span class="color-circle white-circle" id="playerDot">♔</span>
-                    <span id="playerText">You: White</span>
-                </div>
-                <div class="turn-box white-turn" id="turnDisplay">WHITE</div>
-                <div>
-                    <span class="online-dot"></span>
-                    <span style="color: #6bff6b;">Online</span>
-                </div>
+                <span id="playerLabel">You: White</span>
+                <span class="turn white-turn" id="turnLabel">WHITE</span>
+                <span style="color: #6bff6b;">● Online</span>
             </div>
             
-            <div class="board" id="chessboard"></div>
+            <div class="board" id="board"></div>
             
-            <div class="row">
+            <div class="flex">
                 <button onclick="resetGame()">🔄 RESTART</button>
                 <button onclick="exitGame()" style="background: #5a2e2e;">🚪 EXIT</button>
             </div>
@@ -248,16 +190,13 @@
     </div>
 
     <script>
-        // FREE public server for signaling
-        const SERVER_URL = 'https://chess-signal.onrender.com';
-        
-        // Chess pieces
+        // PIECES
         const PIECES = {
             'K':'♔', 'Q':'♕', 'R':'♖', 'B':'♗', 'N':'♘', 'P':'♙',
             'k':'♚', 'q':'♛', 'r':'♜', 'b':'♝', 'n':'♞', 'p':'♟'
         };
         
-        // Starting board
+        // STARTING BOARD
         const START = [
             ['r','n','b','q','k','b','n','r'],
             ['p','p','p','p','p','p','p','p'],
@@ -269,127 +208,122 @@
             ['R','N','B','Q','K','B','N','R']
         ];
         
-        // Game state
+        // GAME VARIABLES
         let board = JSON.parse(JSON.stringify(START));
-        let currentTurn = 'w';
-        let selectedRow = null;
-        let selectedCol = null;
-        let possibleMoves = [];
+        let turn = 'w';
+        let selected = null;
+        let moves = [];
         let myColor = null;
         let roomCode = null;
-        let checkInterval = null;
         
-        // Show create
-        function showCreate() {
-            document.getElementById('createView').classList.remove('hidden');
-            document.getElementById('joinView').classList.add('hidden');
-            createRoom();
-        }
+        // USING FIREBASE (FREE, FAST, RELIABLE)
+        const FIREBASE_URL = 'https://chess-50c7b-default-rtdb.firebaseio.com/';
         
-        // Show join
-        function showJoin() {
-            document.getElementById('createView').classList.add('hidden');
-            document.getElementById('joinView').classList.remove('hidden');
-            document.getElementById('joinStatus').innerHTML = '';
-        }
-        
-        // Create room
-        function createRoom() {
-            // Generate random code
+        function createGame() {
+            // Generate 6-digit code
             roomCode = Math.floor(100000 + Math.random() * 900000).toString();
-            document.getElementById('roomCode').innerText = roomCode;
             
-            // Store room data
-            localStorage.setItem('chess_room_' + roomCode, JSON.stringify({
-                board: board,
-                turn: currentTurn,
-                players: 1,
-                created: Date.now()
-            }));
+            // Hide join view
+            document.getElementById('joinDiv').classList.add('hidden');
             
-            // Check for joiner
-            checkInterval = setInterval(() => {
-                let data = localStorage.getItem('chess_room_' + roomCode);
-                if (data) {
-                    let room = JSON.parse(data);
-                    if (room.players === 2) {
-                        // Friend joined!
-                        myColor = 'w';
-                        clearInterval(checkInterval);
-                        startGame();
-                    }
-                }
-            }, 1000);
+            // Show waiting message
+            const statusDiv = document.createElement('div');
+            statusDiv.className = 'status waiting';
+            statusDiv.id = 'waitingMsg';
+            statusDiv.innerHTML = `🟡 YOUR CODE: <strong style="font-size:2em; display:block; margin:10px;">${roomCode}</strong> Waiting for friend to join...`;
+            document.querySelector('.connect-box').appendChild(statusDiv);
+            
+            // Save to Firebase
+            fetch(FIREBASE_URL + 'games/' + roomCode + '.json', {
+                method: 'PUT',
+                body: JSON.stringify({
+                    board: board,
+                    turn: turn,
+                    player1: 'waiting',
+                    player2: null
+                })
+            });
+            
+            // Check every 2 seconds if someone joined
+            let checkInterval = setInterval(() => {
+                fetch(FIREBASE_URL + 'games/' + roomCode + '/player2.json')
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data === 'joined') {
+                            clearInterval(checkInterval);
+                            myColor = 'w';
+                            startGame();
+                        }
+                    });
+            }, 2000);
         }
         
-        // Join game
+        function showJoin() {
+            document.getElementById('joinDiv').classList.remove('hidden');
+        }
+        
         function joinGame() {
             const code = document.getElementById('codeInput').value;
             if (code.length !== 6) {
-                document.getElementById('joinStatus').innerHTML = '❌ Enter 6 digits';
+                document.getElementById('joinMsg').innerHTML = '❌ Enter 6 digits';
                 return;
             }
             
             roomCode = code;
             
-            // Check if room exists
-            let data = localStorage.getItem('chess_room_' + code);
-            if (!data) {
-                document.getElementById('joinStatus').innerHTML = '❌ Room not found';
-                return;
-            }
-            
-            let room = JSON.parse(data);
-            if (room.players !== 1) {
-                document.getElementById('joinStatus').innerHTML = '❌ Room full';
-                return;
-            }
-            
-            // Update room - player 2 joined
-            room.players = 2;
-            localStorage.setItem('chess_room_' + code, JSON.stringify(room));
-            
-            // Load board
-            board = room.board;
-            currentTurn = room.turn;
-            
-            myColor = 'b';
-            startGame();
+            // Check if game exists
+            fetch(FIREBASE_URL + 'games/' + code + '.json')
+                .then(r => r.json())
+                .then(data => {
+                    if (!data) {
+                        document.getElementById('joinMsg').innerHTML = '❌ Room not found';
+                        return;
+                    }
+                    
+                    // Load board
+                    board = data.board;
+                    turn = data.turn;
+                    
+                    // Mark player2 as joined
+                    fetch(FIREBASE_URL + 'games/' + code + '/player2.json', {
+                        method: 'PUT',
+                        body: JSON.stringify('joined')
+                    });
+                    
+                    myColor = 'b';
+                    startGame();
+                });
         }
         
-        // Start game
         function startGame() {
-            document.getElementById('connectScreen').classList.add('hidden');
-            document.getElementById('gameScreen').classList.remove('hidden');
+            // Hide connect, show game
+            document.getElementById('connectSection').classList.add('hidden');
+            document.getElementById('gameSection').classList.remove('hidden');
             
-            // Update player display
-            document.getElementById('playerText').innerText = myColor === 'w' ? 'You: White' : 'You: Black';
-            document.getElementById('playerDot').className = `color-circle ${myColor === 'w' ? 'white-circle' : 'black-circle'}`;
+            // Update player info
+            document.getElementById('playerLabel').innerText = myColor === 'w' ? 'You: White' : 'You: Black';
             
             renderBoard();
-            updateTurnDisplay();
+            updateTurn();
             
             // Listen for opponent moves
-            checkInterval = setInterval(() => {
-                let data = localStorage.getItem('chess_room_' + roomCode);
-                if (data) {
-                    let room = JSON.parse(data);
-                    if (JSON.stringify(room.board) !== JSON.stringify(board)) {
-                        // Opponent moved
-                        board = room.board;
-                        currentTurn = room.turn;
-                        selectedRow = null;
-                        selectedCol = null;
-                        possibleMoves = [];
-                        renderBoard();
-                        updateTurnDisplay();
-                    }
-                }
-            }, 1000);
+            setInterval(() => {
+                fetch(FIREBASE_URL + 'games/' + roomCode + '.json')
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data && JSON.stringify(data.board) !== JSON.stringify(board)) {
+                            board = data.board;
+                            turn = data.turn;
+                            selected = null;
+                            moves = [];
+                            renderBoard();
+                            updateTurn();
+                        }
+                    });
+            }, 2000);
         }
         
-        // Get valid moves (simplified)
-        function getValidMoves(row, col) {
+        function getMoves(row, col) {
             let piece = board[row][col];
             if (!piece) return [];
             
@@ -397,7 +331,6 @@
             let type = piece.toLowerCase();
             let moves = [];
             
-            // Pawn
             if (type === 'p') {
                 let dir = isWhite ? -1 : 1;
                 let start = isWhite ? 6 : 1;
@@ -417,7 +350,6 @@
                     }
                 }
             }
-            // Knight
             else if (type === 'n') {
                 let jumps = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
                 for (let [dr,dc] of jumps) {
@@ -428,7 +360,6 @@
                     }
                 }
             }
-            // King
             else if (type === 'k') {
                 for (let dr of [-1,0,1]) {
                     for (let dc of [-1,0,1]) {
@@ -441,7 +372,6 @@
                     }
                 }
             }
-            // Rook, Bishop, Queen
             else {
                 let dirs = type==='r' ? [[-1,0],[1,0],[0,-1],[0,1]] :
                           type==='b' ? [[-1,-1],[-1,1],[1,-1],[1,1]] :
@@ -463,52 +393,49 @@
             return moves;
         }
         
-        // Handle click
         function handleClick(row, col) {
             if (!myColor) return;
             
-            // Check turn
-            if ((myColor === 'w' && currentTurn !== 'w') || (myColor === 'b' && currentTurn !== 'b')) {
-                alert("Wait for your turn!");
+            if ((myColor === 'w' && turn !== 'w') || (myColor === 'b' && turn !== 'b')) {
+                alert("Not your turn!");
                 return;
             }
             
-            if (selectedRow === null) {
-                // Select piece
+            if (selected === null) {
                 let piece = board[row][col];
                 if (piece && ((myColor==='w' && piece===piece.toUpperCase()) || 
                              (myColor==='b' && piece===piece.toLowerCase()))) {
-                    selectedRow = row;
-                    selectedCol = col;
-                    possibleMoves = getValidMoves(row, col);
+                    selected = [row, col];
+                    moves = getMoves(row, col);
                     renderBoard();
                 }
                 return;
             }
             
-            // Make move
-            if (possibleMoves.some(([r,c]) => r===row && c===col)) {
-                // Move piece
-                board[row][col] = board[selectedRow][selectedCol];
-                board[selectedRow][selectedCol] = '';
-                currentTurn = currentTurn === 'w' ? 'b' : 'w';
+            if (moves.some(([r,c]) => r===row && c===col)) {
+                let [fr, fc] = selected;
+                board[row][col] = board[fr][fc];
+                board[fr][fc] = '';
+                turn = turn === 'w' ? 'b' : 'w';
                 
-                // Save to localStorage for opponent
-                localStorage.setItem('chess_room_' + roomCode, JSON.stringify({
-                    board: board,
-                    turn: currentTurn,
-                    players: 2
-                }));
+                // Save to Firebase
+                fetch(FIREBASE_URL + 'games/' + roomCode + '.json', {
+                    method: 'PUT',
+                    body: JSON.stringify({
+                        board: board,
+                        turn: turn,
+                        player1: 'waiting',
+                        player2: 'joined'
+                    })
+                });
             }
             
-            selectedRow = null;
-            selectedCol = null;
-            possibleMoves = [];
+            selected = null;
+            moves = [];
             renderBoard();
-            updateTurnDisplay();
+            updateTurn();
         }
         
-        // Render board
         function renderBoard() {
             let html = '';
             for (let i=0; i<8; i++) {
@@ -516,61 +443,47 @@
                     let piece = board[i][j];
                     let classes = `square ${(i+j)%2===0 ? 'light' : 'dark'}`;
                     
-                    if (selectedRow===i && selectedCol===j)
+                    if (selected && selected[0]===i && selected[1]===j)
                         classes += ' selected';
                     
-                    if (possibleMoves.some(([r,c]) => r===i && c===j))
+                    if (moves.some(([r,c]) => r===i && c===j))
                         classes += board[i][j] ? ' capture' : ' possible';
                     
                     html += `<div class="${classes}" onclick="handleClick(${i},${j})">${piece ? PIECES[piece] : ''}</div>`;
                 }
             }
-            document.getElementById('chessboard').innerHTML = html;
+            document.getElementById('board').innerHTML = html;
         }
         
-        // Update turn
-        function updateTurnDisplay() {
-            let turnBox = document.getElementById('turnDisplay');
-            turnBox.innerText = currentTurn === 'w' ? 'WHITE' : 'BLACK';
-            turnBox.className = `turn-box ${currentTurn==='w' ? 'white-turn' : 'black-turn'}`;
+        function updateTurn() {
+            let turnDiv = document.getElementById('turnLabel');
+            turnDiv.innerText = turn === 'w' ? 'WHITE' : 'BLACK';
+            turnDiv.className = `turn ${turn==='w' ? 'white-turn' : 'black-turn'}`;
         }
         
-        // Reset game
         function resetGame() {
             board = JSON.parse(JSON.stringify(START));
-            currentTurn = 'w';
-            selectedRow = null;
-            selectedCol = null;
-            possibleMoves = [];
+            turn = 'w';
+            selected = null;
+            moves = [];
             renderBoard();
-            updateTurnDisplay();
+            updateTurn();
             
-            // Save reset
-            if (roomCode) {
-                localStorage.setItem('chess_room_' + roomCode, JSON.stringify({
+            fetch(FIREBASE_URL + 'games/' + roomCode + '.json', {
+                method: 'PUT',
+                body: JSON.stringify({
                     board: board,
-                    turn: currentTurn,
-                    players: 2
-                }));
-            }
+                    turn: turn,
+                    player1: 'waiting',
+                    player2: 'joined'
+                })
+            });
         }
         
-        // Exit
         function exitGame() {
-            if (checkInterval) clearInterval(checkInterval);
-            if (roomCode) {
-                localStorage.removeItem('chess_room_' + roomCode);
-            }
             location.reload();
         }
         
-        // Copy code
-        function copyCode() {
-            navigator.clipboard.writeText(roomCode);
-            alert('✅ Code copied! Share with your friend');
-        }
-        
-        // Initial render
         renderBoard();
     </script>
 </body>
