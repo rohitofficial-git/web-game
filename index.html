@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>♜ CHESS - SIMPLE & WORKS</title>
+    <title>♜ SIMPLE LINK CHESS</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            user-select: none;
         }
         
         body {
             background: #2d2a1e;
-            font-family: Arial, sans-serif;
+            font-family: 'Courier New', monospace;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -21,7 +22,7 @@
             padding: 10px;
         }
         
-        .game-box {
+        .container {
             background: #3a2c1b;
             padding: 20px;
             border-radius: 20px;
@@ -36,32 +37,36 @@
             margin-bottom: 20px;
         }
         
-        .connect-box {
+        .section {
             background: #1e1a0f;
             border: 2px solid #b88b4a;
             border-radius: 12px;
             padding: 20px;
+            margin-bottom: 20px;
         }
         
-        .code-box {
+        .link-box {
             background: #2a2418;
             padding: 20px;
             border-radius: 10px;
             text-align: center;
             margin: 15px 0;
+            word-break: break-all;
         }
         
-        .big-code {
-            font-size: 4em;
-            font-weight: bold;
+        .game-link {
             color: #ffd966;
-            letter-spacing: 10px;
+            font-size: 0.9em;
+            background: #1a150e;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
         }
         
         input {
             width: 100%;
-            padding: 20px;
-            font-size: 2em;
+            padding: 18px;
+            font-size: 1.2em;
             text-align: center;
             background: #2a2418;
             border: 2px solid #b88b4a;
@@ -78,12 +83,14 @@
             border: 2px solid #b88b4a;
             color: #ffd966;
             font-size: 1.3em;
+            font-weight: bold;
             border-radius: 10px;
             cursor: pointer;
         }
         
-        .green-btn {
+        button.green {
             background: #2e5a2e;
+            border-color: #6bff6b;
         }
         
         .status {
@@ -96,7 +103,6 @@
         
         .waiting { background: #5a4a2e; color: #ffd966; }
         .connected { background: #2e5a2e; color: #b3ffb3; }
-        .error { background: #5a2e2e; color: #ffb3b3; }
         
         .game-header {
             display: flex;
@@ -151,29 +157,46 @@
             gap: 10px;
             margin-top: 15px;
         }
+        
+        .copy-btn {
+            background: #4a6fa5;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
-    <div class="game-box">
-        <h1>♜ SIMPLE CHESS ♞</h1>
+    <div class="container">
+        <h1>♜ LINK CHESS ♞</h1>
         
-        <!-- CONNECT SECTION -->
-        <div id="connectSection">
-            <div class="connect-box">
-                <button class="green-btn" onclick="createGame()">🎮 CREATE GAME</button>
-                <button onclick="showJoin()">🔑 JOIN GAME</button>
+        <!-- CONNECT SCREEN -->
+        <div id="connectScreen">
+            <div class="section">
+                <button class="green" onclick="createGame()">🔗 CREATE GAME LINK</button>
+                <button onclick="showJoin()">📋 PASTE LINK TO JOIN</button>
                 
-                <!-- JOIN VIEW (hidden initially) -->
-                <div id="joinDiv" class="hidden">
-                    <input type="text" id="codeInput" placeholder="ENTER 6-DIGIT CODE">
-                    <button class="green-btn" onclick="joinGame()">CONNECT</button>
-                    <div class="status error" id="joinMsg"></div>
+                <!-- CREATE VIEW -->
+                <div id="createView" class="hidden">
+                    <div class="link-box">
+                        <div style="color: #c9b27e; margin-bottom: 10px;">📎 YOUR GAME LINK:</div>
+                        <div class="game-link" id="gameLink">https://...</div>
+                        <button class="copy-btn" onclick="copyLink()">📋 COPY LINK</button>
+                    </div>
+                    <div class="status waiting" id="waitingStatus">
+                        ⏳ Share this link with your friend...
+                    </div>
+                </div>
+                
+                <!-- JOIN VIEW -->
+                <div id="joinView" class="hidden">
+                    <input type="text" id="linkInput" placeholder="Paste game link here">
+                    <button class="green" onclick="joinFromLink()">🎮 JOIN GAME</button>
+                    <div class="status" id="joinStatus"></div>
                 </div>
             </div>
         </div>
         
-        <!-- GAME SECTION (hidden initially) -->
-        <div id="gameSection" class="hidden">
+        <!-- GAME SCREEN -->
+        <div id="gameScreen" class="hidden">
             <div class="game-header">
                 <span id="playerLabel">You: White</span>
                 <span class="turn white-turn" id="turnLabel">WHITE</span>
@@ -208,118 +231,112 @@
             ['R','N','B','Q','K','B','N','R']
         ];
         
-        // Replace the ENTIRE script from line 200 to the end with this:
-
-        // GAME VARIABLES
+        // GAME STATE
         let board = JSON.parse(JSON.stringify(START));
         let turn = 'w';
         let selected = null;
         let moves = [];
         let myColor = null;
-        let roomCode = null;
-        let checkInterval = null;
+        let gameId = null;
+        let playerNumber = null; // 1 or 2
         
-        // At the VERY TOP of your script (after variables):
+        // Check URL on load
         window.addEventListener('load', function() {
             const urlParams = new URLSearchParams(window.location.search);
-            const codeFromUrl = urlParams.get('code');
+            const id = urlParams.get('game');
             
-            if (codeFromUrl) {
-                document.getElementById('codeInput').value = codeFromUrl;
-                // Optional - auto join
-                setTimeout(() => {
-                    if (document.getElementById('joinGame')) {
-                        joinGame();
-                    }
-                }, 500);
+            if (id) {
+                document.getElementById('linkInput').value = window.location.href;
+                document.getElementById('joinStatus').innerHTML = '🟡 Click JOIN GAME to start';
             }
         });
-
-       // In your createGame function:
+        
         function createGame() {
-            roomCode = Math.floor(100000 + Math.random() * 900000).toString();
+            // Generate random game ID
+            gameId = Math.random().toString(36).substring(2, 10);
             
-            // THIS MAKES URL CHANGE
-            window.history.pushState({}, '', '?code=' + roomCode);
+            // Create full URL
+            const gameUrl = window.location.href.split('?')[0] + '?game=' + gameId;
+            document.getElementById('gameLink').innerText = gameUrl;
             
-            // Rest of your createGame code...
-            document.getElementById('joinDiv').classList.add('hidden');
+            // Show create view
+            document.getElementById('createView').classList.remove('hidden');
+            document.getElementById('joinView').classList.add('hidden');
             
-            const statusDiv = document.createElement('div');
-            statusDiv.className = 'status waiting';
-            statusDiv.id = 'waitingMsg';
-            statusDiv.innerHTML = '🟡 YOUR CODE: <strong style="font-size:2em; display:block; margin:10px;">${roomCode}</strong> Waiting for friend to join...';
-            document.querySelector('.connect-box').appendChild(statusDiv);
-            
-            // Save to localStorage
-            localStorage.setItem('game_' + roomCode, JSON.stringify({
+            // Store game in localStorage
+            localStorage.setItem('game_' + gameId, JSON.stringify({
                 board: board,
                 turn: turn,
-                players: 1
+                players: [window.location.href] // Store creator's URL
             }));
             
-            // Check for joiner
-            checkInterval = setInterval(() => {
-                let gameData = localStorage.getItem('game_' + roomCode);
-                if (gameData) {
-                    let game = JSON.parse(gameData);
-                    if (game.players === 2) {
-                        clearInterval(checkInterval);
-                        myColor = 'w';
-                        startGame();
-                    }
-                }
-            }, 1000);
+            // Set player 1
+            playerNumber = 1;
+            
+            // Check for opponent
+            startChecking();
         }
         
         function showJoin() {
-            document.getElementById('joinDiv').classList.remove('hidden');
+            document.getElementById('createView').classList.add('hidden');
+            document.getElementById('joinView').classList.remove('hidden');
+            document.getElementById('joinStatus').innerHTML = '';
         }
         
-        function joinGame() {
-            const code = document.getElementById('codeInput').value;
-            if (code.length !== 6) {
-                document.getElementById('joinMsg').innerHTML = '❌ Enter 6 digits';
+        function joinFromLink() {
+            const link = document.getElementById('linkInput').value;
+            
+            // Extract game ID from link
+            const match = link.match(/[?&]game=([^&]+)/);
+            if (!match) {
+                document.getElementById('joinStatus').innerHTML = '❌ Invalid game link';
                 return;
             }
             
-            roomCode = code;
+            gameId = match[1];
             
-            // Check if game exists in localStorage
-            let gameData = localStorage.getItem('game_' + code);
+            // Check if game exists
+            const gameData = localStorage.getItem('game_' + gameId);
             if (!gameData) {
-                document.getElementById('joinMsg').innerHTML = '❌ Room not found';
+                document.getElementById('joinStatus').innerHTML = '❌ Game not found';
                 return;
             }
             
-            let game = JSON.parse(gameData);
+            const game = JSON.parse(gameData);
             
             // Load board
             board = game.board;
             turn = game.turn;
             
-            // Update to 2 players
-            game.players = 2;
-            localStorage.setItem('game_' + code, JSON.stringify(game));
+            // Set player 2
+            playerNumber = 2;
             
-            myColor = 'b';
+            // Randomly assign colors
+            const random = Math.random() < 0.5;
+            myColor = random ? 'w' : 'b';
+            
+            // Update game with both players
+            game.players.push(window.location.href);
+            localStorage.setItem('game_' + gameId, JSON.stringify(game));
+            
             startGame();
         }
         
-        function startGame() {
-            document.getElementById('connectSection').classList.add('hidden');
-            document.getElementById('gameSection').classList.remove('hidden');
-            
-            document.getElementById('playerLabel').innerText = myColor === 'w' ? 'You: White' : 'You: Black';
-            
-            renderBoard();
-            updateTurn();
-            
-            // Listen for opponent moves
-            checkInterval = setInterval(() => {
-                let gameData = localStorage.getItem('game_' + roomCode);
+        function startChecking() {
+            setInterval(() => {
+                const gameData = localStorage.getItem('game_' + gameId);
                 if (gameData) {
-                    let game = JSON.parse(gameData);
+                    const game = JSON.parse(gameData);
+                    
+                    // If opponent joined
+                    if (game.players.length === 2 && !myColor) {
+                        // Randomly assign colors
+                        const random = Math.random() < 0.5;
+                        myColor = random ? 'w' : 'b';
+                        startGame();
+                    }
+                    
+                    // Update board if opponent moved
                     if (JSON.stringify(game.board) !== JSON.stringify(board)) {
                         board = game.board;
                         turn = game.turn;
@@ -332,7 +349,15 @@
             }, 1000);
         }
         
-        // Rest of your functions (getMoves, handleClick, etc.) remain the same
+        function startGame() {
+            document.getElementById('connectScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            
+            document.getElementById('playerLabel').innerText = myColor === 'w' ? 'You: White' : 'You: Black';
+            
+            renderBoard();
+            updateTurn();
+        }
         
         function getMoves(row, col) {
             let piece = board[row][col];
@@ -429,16 +454,14 @@
                 board[fr][fc] = '';
                 turn = turn === 'w' ? 'b' : 'w';
                 
-                // Save to Firebase
-                fetch(FIREBASE_URL + 'games/' + roomCode + '.json', {
-                    method: 'PUT',
-                    body: JSON.stringify({
-                        board: board,
-                        turn: turn,
-                        player1: 'waiting',
-                        player2: 'joined'
-                    })
-                });
+                // Save to localStorage
+                const gameData = localStorage.getItem('game_' + gameId);
+                if (gameData) {
+                    const game = JSON.parse(gameData);
+                    game.board = board;
+                    game.turn = turn;
+                    localStorage.setItem('game_' + gameId, JSON.stringify(game));
+                }
             }
             
             selected = null;
@@ -480,15 +503,19 @@
             renderBoard();
             updateTurn();
             
-            fetch(FIREBASE_URL + 'games/' + roomCode + '.json', {
-                method: 'PUT',
-                body: JSON.stringify({
-                    board: board,
-                    turn: turn,
-                    player1: 'waiting',
-                    player2: 'joined'
-                })
-            });
+            const gameData = localStorage.getItem('game_' + gameId);
+            if (gameData) {
+                const game = JSON.parse(gameData);
+                game.board = board;
+                game.turn = turn;
+                localStorage.setItem('game_' + gameId, JSON.stringify(game));
+            }
+        }
+        
+        function copyLink() {
+            const link = document.getElementById('gameLink').innerText;
+            navigator.clipboard.writeText(link);
+            alert('✅ Link copied! Share with your friend');
         }
         
         function exitGame() {
