@@ -1,31 +1,47 @@
-# ♜ REAL-TIME CHESS ♞
+# ♟️ SIMPLE CHESS ONLINE
 
-Play chess with a friend online in real-time! No login, no signup, completely free.
+A lightweight, premium, and fully functional online chess game designed for two friends to play together from anywhere in the world. No accounts, no servers, just pure chess.
 
-## 🎮 How to Play
+Designed by **Rohit**.
 
-1. **Both players open this link:(https://rohitofficial-git.github.io/web-game/)
+---
 
-2. **One player clicks** "CREATE ROOM" (becomes White)
+## 🚀 Features
 
-3. **Other player** enters the same room code and clicks "JOIN ROOM" (becomes Black)
+- **Real-Time Multiplayer**: Built with Peer-to-Peer (P2P) technology for near-zero lag.
+- **No Signup Required**: Simply generate a link, share it, and start playing.
+- **Beautiful Aesthetics**: A custom-designed, gold-on-dark theme for a premium feel.
+- **Mobile Friendly**: Responsive design that works perfectly on both desktop and mobile browsers.
+- **One-Click Play**: Automatic role assignment (Host is White, Guest is Black).
 
-4. **Play!** Moves appear instantly on both screens
+## 🛠️ How it Works
 
-## 📱 Works on:
-- 💻 Computer
-- 📱 Phone
-- 💪 Tablet
+This game uses **PeerJS** to establish a direct connection between two browsers. 
+1. **The move data** is sent directly from your computer to your friend's computer.
+2. **Privacy**: Since it's P2P, no game data is stored on any server.
+3. **Speed**: Direct connections mean moves appear almost instantly.
 
-## ✨ Features
-- Real-time moves (no refreshing needed)
-- Shows whose turn it is
-- Know when opponent is online
-- New game button to restart
+## 🕹️ How to Play
 
-## 🔗 Share with Friend
-Just send them this link - that's it!
+1. **Host a Game**: Click on `🔗 CREATE GAME LINK`.
+2. **Share**: Copy the generated link and send it to your friend.
+3. **Connect**: Once your friend opens the link and clicks `🎮 JOIN GAME`, the board will appear.
+4. **Play**: White starts first. Good luck!
 
-(https://rohitofficial-git.github.io/web-game/)
+## 📦 Installation & Deployment
 
-Made with ❤️ for playing chess with friends
+Since this is a single-file application, deployment is incredibly easy:
+
+1. **Download** the `index.html` file.
+2. **Upload** it to any static hosting service (GitHub Pages, Vercel, Netlify).
+3. **Play**!
+
+## 📜 Credits
+
+- **Game Engine & Design**: Rohit
+- **P2P Library**: [PeerJS](https://peerjs.com/)
+- **Pieces**: Standard Unicode Chess Characters
+
+---
+
+*Enjoy the game!*
