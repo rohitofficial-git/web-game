@@ -6,6 +6,12 @@ Designed by **Rohit**.
 
 ---
 
+## 🔗 Live Link
+
+**Click here to play:** [👉 Play Simple Chess Online](https://rohitofficial-git.github.io/web-game/)
+
+---
+
 ## 🚀 Features
 
 - **Real-Time Multiplayer**: Built with Peer-to-Peer (P2P) technology for near-zero lag.
@@ -41,6 +47,11 @@ Since this is a single-file application, deployment is incredibly easy:
 - **Game Engine & Design**: Rohit
 - **P2P Library**: [PeerJS](https://peerjs.com/)
 - **Pieces**: Standard Unicode Chess Characters
+
+---
+
+*Enjoy the game!*
+
 
 ---
 
