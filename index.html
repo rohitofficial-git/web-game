@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -11,7 +12,7 @@
             padding: 0;
             user-select: none;
         }
-        
+
         body {
             background: #2d2a1e;
             font-family: 'Courier New', monospace;
@@ -21,7 +22,7 @@
             min-height: 100vh;
             padding: 10px;
         }
-        
+
         .container {
             background: #3a2c1b;
             padding: 20px;
@@ -30,13 +31,13 @@
             max-width: 600px;
             width: 100%;
         }
-        
+
         h1 {
             color: #ffd966;
             text-align: center;
             margin-bottom: 20px;
         }
-        
+
         .section {
             background: #1e1a0f;
             border: 2px solid #b88b4a;
@@ -44,7 +45,7 @@
             padding: 20px;
             margin-bottom: 20px;
         }
-        
+
         .link-box {
             background: #2a2418;
             padding: 20px;
@@ -53,7 +54,7 @@
             margin: 15px 0;
             word-break: break-all;
         }
-        
+
         .game-link {
             color: #ffd966;
             font-size: 0.9em;
@@ -62,7 +63,7 @@
             border-radius: 8px;
             margin: 10px 0;
         }
-        
+
         input {
             width: 100%;
             padding: 18px;
@@ -74,7 +75,7 @@
             border-radius: 10px;
             margin: 10px 0;
         }
-        
+
         button {
             width: 100%;
             padding: 18px;
@@ -87,12 +88,12 @@
             border-radius: 10px;
             cursor: pointer;
         }
-        
+
         button.green {
             background: #2e5a2e;
             border-color: #6bff6b;
         }
-        
+
         .status {
             padding: 12px;
             border-radius: 8px;
@@ -100,10 +101,17 @@
             margin: 10px 0;
             font-weight: bold;
         }
-        
-        .waiting { background: #5a4a2e; color: #ffd966; }
-        .connected { background: #2e5a2e; color: #b3ffb3; }
-        
+
+        .waiting {
+            background: #5a4a2e;
+            color: #ffd966;
+        }
+
+        .connected {
+            background: #2e5a2e;
+            color: #b3ffb3;
+        }
+
         .game-header {
             display: flex;
             justify-content: space-between;
@@ -113,16 +121,23 @@
             margin-bottom: 15px;
             color: #ffd966;
         }
-        
+
         .turn {
             padding: 8px 16px;
             border-radius: 20px;
             font-weight: bold;
         }
-        
-        .white-turn { background: white; color: black; }
-        .black-turn { background: black; color: #ffd966; }
-        
+
+        .white-turn {
+            background: white;
+            color: black;
+        }
+
+        .black-turn {
+            background: black;
+            color: #ffd966;
+        }
+
         .board {
             display: grid;
             grid-template-columns: repeat(8, 1fr);
@@ -133,7 +148,7 @@
             padding: 2px;
             margin: 15px 0;
         }
-        
+
         .square {
             aspect-ratio: 1;
             display: flex;
@@ -142,38 +157,55 @@
             font-size: min(7vw, 40px);
             cursor: pointer;
         }
-        
-        .light { background: #eed9b2; }
-        .dark { background: #8b5f3c; }
-        .selected { background: #b3d9a0 !important; }
-        .possible { background: #9fc5e8 !important; }
-        .capture { background: #f4a7a7 !important; }
-        
-        .hidden { display: none; }
-        
+
+        .light {
+            background: #eed9b2;
+        }
+
+        .dark {
+            background: #8b5f3c;
+        }
+
+        .selected {
+            background: #b3d9a0 !important;
+        }
+
+        .possible {
+            background: #9fc5e8 !important;
+        }
+
+        .capture {
+            background: #f4a7a7 !important;
+        }
+
+        .hidden {
+            display: none;
+        }
+
         .flex {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
             margin-top: 15px;
         }
-        
+
         .copy-btn {
             background: #4a6fa5;
             margin-top: 10px;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>♜ LINK CHESS ♞</h1>
-        
+
         <!-- CONNECT SCREEN -->
         <div id="connectScreen">
             <div class="section">
                 <button class="green" onclick="createGame()">🔗 CREATE GAME LINK</button>
                 <button onclick="showJoin()">📋 PASTE LINK TO JOIN</button>
-                
+
                 <!-- CREATE VIEW -->
                 <div id="createView" class="hidden">
                     <div class="link-box">
@@ -185,7 +217,7 @@
                         ⏳ Share this link with your friend...
                     </div>
                 </div>
-                
+
                 <!-- JOIN VIEW -->
                 <div id="joinView" class="hidden">
                     <input type="text" id="linkInput" placeholder="Paste game link here">
@@ -194,7 +226,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- GAME SCREEN -->
         <div id="gameScreen" class="hidden">
             <div class="game-header">
@@ -202,9 +234,9 @@
                 <span class="turn white-turn" id="turnLabel">WHITE</span>
                 <span style="color: #6bff6b;">● Online</span>
             </div>
-            
+
             <div class="board" id="board"></div>
-            
+
             <div class="flex">
                 <button onclick="resetGame()">🔄 RESTART</button>
                 <button onclick="exitGame()" style="background: #5a2e2e;">🚪 EXIT</button>
@@ -212,215 +244,210 @@
         </div>
     </div>
 
+    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
     <script>
         // PIECES
         const PIECES = {
-            'K':'♔', 'Q':'♕', 'R':'♖', 'B':'♗', 'N':'♘', 'P':'♙',
-            'k':'♚', 'q':'♛', 'r':'♜', 'b':'♝', 'n':'♞', 'p':'♟'
+            'K': '♔', 'Q': '♕', 'R': '♖', 'B': '♗', 'N': '♘', 'P': '♙',
+            'k': '♚', 'q': '♛', 'r': '♜', 'b': '♝', 'n': '♞', 'p': '♟'
         };
-        
+
         // STARTING BOARD
         const START = [
-            ['r','n','b','q','k','b','n','r'],
-            ['p','p','p','p','p','p','p','p'],
-            ['','','','','','','',''],
-            ['','','','','','','',''],
-            ['','','','','','','',''],
-            ['','','','','','','',''],
-            ['P','P','P','P','P','P','P','P'],
-            ['R','N','B','Q','K','B','N','R']
+            ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
+            ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
+            ['', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', ''],
+            ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
+            ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']
         ];
-        
+
         // GAME STATE
         let board = JSON.parse(JSON.stringify(START));
         let turn = 'w';
         let selected = null;
         let moves = [];
         let myColor = null;
-        let gameId = null;
-        let playerNumber = null; // 1 or 2
-        
+        let peer = null;
+        let conn = null;
+        let isHost = false;
+
         // Check URL on load
-        window.addEventListener('load', function() {
+        window.addEventListener('load', function () {
             const urlParams = new URLSearchParams(window.location.search);
             const id = urlParams.get('game');
-            
             if (id) {
                 document.getElementById('linkInput').value = window.location.href;
-                document.getElementById('joinStatus').innerHTML = '🟡 Click JOIN GAME to start';
+                document.getElementById('joinStatus').innerHTML = '🟡 Found a link! Click JOIN.';
+                showJoin();
             }
         });
-        
+
+        function initPeer() {
+            peer = new Peer();
+
+            peer.on('open', (myId) => {
+                console.log('My ID:', myId);
+                if (isHost) {
+                    const gameUrl = window.location.href.split('?')[0] + '?game=' + myId;
+                    document.getElementById('gameLink').innerText = gameUrl;
+                }
+            });
+
+            peer.on('connection', (connection) => {
+                if (!isHost) return; // Only host handles incoming connections
+                conn = connection;
+                setupConnection();
+            });
+
+            peer.on('error', (err) => {
+                console.error('Peer Error:', err.type);
+                alert("Connection Error: " + err.type);
+            });
+        }
+
+        function setupConnection() {
+            conn.on('open', () => {
+                console.log('Data channel open');
+                if (isHost) {
+                    myColor = 'w'; // Host is ALWAYS White
+                    conn.send({
+                        type: 'init',
+                        color: 'b',
+                        board: board,
+                        turn: turn
+                    });
+                    startGame();
+                }
+            });
+
+            conn.on('data', (data) => {
+                console.log('Received:', data.type);
+                if (data.type === 'init') {
+                    myColor = data.color;
+                    board = data.board;
+                    turn = data.turn;
+                    startGame();
+                } else if (data.type === 'move') {
+                    board = data.board;
+                    turn = data.turn;
+                    renderBoard();
+                    updateTurn();
+                } else if (data.type === 'reset') {
+                    board = JSON.parse(JSON.stringify(START));
+                    turn = 'w';
+                    renderBoard();
+                    updateTurn();
+                }
+            });
+
+            conn.on('close', () => {
+                alert("🚪 Peer disconnected.");
+                location.reload();
+            });
+        }
+
         function createGame() {
-            // Generate random game ID
-            gameId = Math.random().toString(36).substring(2, 10);
-            
-            // Create full URL
-            const gameUrl = window.location.href.split('?')[0] + '?game=' + gameId;
-            document.getElementById('gameLink').innerText = gameUrl;
-            
-            // Show create view
+            isHost = true;
             document.getElementById('createView').classList.remove('hidden');
             document.getElementById('joinView').classList.add('hidden');
-            
-            // Store game in localStorage
-            localStorage.setItem('game_' + gameId, JSON.stringify({
-                board: board,
-                turn: turn,
-                players: [window.location.href] // Store creator's URL
-            }));
-            
-            // Set player 1
-            playerNumber = 1;
-            
-            // Check for opponent
-            startChecking();
+            initPeer();
         }
-        
+
         function showJoin() {
             document.getElementById('createView').classList.add('hidden');
             document.getElementById('joinView').classList.remove('hidden');
-            document.getElementById('joinStatus').innerHTML = '';
         }
-        
+
         function joinFromLink() {
+            isHost = false;
             const link = document.getElementById('linkInput').value;
-            
-            // Extract game ID from link
             const match = link.match(/[?&]game=([^&]+)/);
             if (!match) {
-                document.getElementById('joinStatus').innerHTML = '❌ Invalid game link';
+                document.getElementById('joinStatus').innerHTML = '❌ Invalid link';
                 return;
             }
-            
-            gameId = match[1];
-            
-            // Check if game exists
-            const gameData = localStorage.getItem('game_' + gameId);
-            if (!gameData) {
-                document.getElementById('joinStatus').innerHTML = '❌ Game not found';
-                return;
-            }
-            
-            const game = JSON.parse(gameData);
-            
-            // Load board
-            board = game.board;
-            turn = game.turn;
-            
-            // Set player 2
-            playerNumber = 2;
-            
-            // Randomly assign colors
-            const random = Math.random() < 0.5;
-            myColor = random ? 'w' : 'b';
-            
-            // Update game with both players
-            game.players.push(window.location.href);
-            localStorage.setItem('game_' + gameId, JSON.stringify(game));
-            
-            startGame();
+
+            const hostId = match[1];
+            peer = new Peer();
+            peer.on('open', () => {
+                conn = peer.connect(hostId);
+                setupConnection();
+            });
         }
-        
-        function startChecking() {
-            setInterval(() => {
-                const gameData = localStorage.getItem('game_' + gameId);
-                if (gameData) {
-                    const game = JSON.parse(gameData);
-                    
-                    // If opponent joined
-                    if (game.players.length === 2 && !myColor) {
-                        // Randomly assign colors
-                        const random = Math.random() < 0.5;
-                        myColor = random ? 'w' : 'b';
-                        startGame();
-                    }
-                    
-                    // Update board if opponent moved
-                    if (JSON.stringify(game.board) !== JSON.stringify(board)) {
-                        board = game.board;
-                        turn = game.turn;
-                        selected = null;
-                        moves = [];
-                        renderBoard();
-                        updateTurn();
-                    }
-                }
-            }, 1000);
-        }
-        
+
         function startGame() {
             document.getElementById('connectScreen').classList.add('hidden');
             document.getElementById('gameScreen').classList.remove('hidden');
-            
             document.getElementById('playerLabel').innerText = myColor === 'w' ? 'You: White' : 'You: Black';
-            
             renderBoard();
             updateTurn();
         }
-        
+
         function getMoves(row, col) {
             let piece = board[row][col];
             if (!piece) return [];
-            
+
             let isWhite = piece === piece.toUpperCase();
             let type = piece.toLowerCase();
             let moves = [];
-            
+
             if (type === 'p') {
                 let dir = isWhite ? -1 : 1;
                 let start = isWhite ? 6 : 1;
-                
-                if (row+dir >=0 && row+dir<8 && !board[row+dir][col]) {
-                    moves.push([row+dir, col]);
-                    if (row === start && !board[row+2*dir][col])
-                        moves.push([row+2*dir, col]);
+
+                if (row + dir >= 0 && row + dir < 8 && !board[row + dir][col]) {
+                    moves.push([row + dir, col]);
+                    if (row === start && !board[row + 2 * dir][col])
+                        moves.push([row + 2 * dir, col]);
                 }
-                
-                for (let dc of [-1,1]) {
-                    let nc = col+dc;
-                    if (nc>=0 && nc<8 && row+dir>=0 && row+dir<8) {
-                        let target = board[row+dir][nc];
-                        if (target && (target===target.toLowerCase()) === isWhite)
-                            moves.push([row+dir, nc]);
+
+                for (let dc of [-1, 1]) {
+                    let nc = col + dc;
+                    if (nc >= 0 && nc < 8 && row + dir >= 0 && row + dir < 8) {
+                        let target = board[row + dir][nc];
+                        if (target && (target === target.toLowerCase()) === isWhite)
+                            moves.push([row + dir, nc]);
                     }
                 }
             }
             else if (type === 'n') {
-                let jumps = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
-                for (let [dr,dc] of jumps) {
-                    let r = row+dr, c = col+dc;
-                    if (r>=0 && r<8 && c>=0 && c<8) {
-                        if (!board[r][c] || (board[r][c]===board[r][c].toLowerCase())===isWhite)
-                            moves.push([r,c]);
+                let jumps = [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]];
+                for (let [dr, dc] of jumps) {
+                    let r = row + dr, c = col + dc;
+                    if (r >= 0 && r < 8 && c >= 0 && c < 8) {
+                        if (!board[r][c] || (board[r][c] === board[r][c].toLowerCase()) === isWhite)
+                            moves.push([r, c]);
                     }
                 }
             }
             else if (type === 'k') {
-                for (let dr of [-1,0,1]) {
-                    for (let dc of [-1,0,1]) {
-                        if (dr===0 && dc===0) continue;
-                        let r = row+dr, c = col+dc;
-                        if (r>=0 && r<8 && c>=0 && c<8) {
-                            if (!board[r][c] || (board[r][c]===board[r][c].toLowerCase())===isWhite)
-                                moves.push([r,c]);
+                for (let dr of [-1, 0, 1]) {
+                    for (let dc of [-1, 0, 1]) {
+                        if (dr === 0 && dc === 0) continue;
+                        let r = row + dr, c = col + dc;
+                        if (r >= 0 && r < 8 && c >= 0 && c < 8) {
+                            if (!board[r][c] || (board[r][c] === board[r][c].toLowerCase()) === isWhite)
+                                moves.push([r, c]);
                         }
                     }
                 }
             }
             else {
-                let dirs = type==='r' ? [[-1,0],[1,0],[0,-1],[0,1]] :
-                          type==='b' ? [[-1,-1],[-1,1],[1,-1],[1,1]] :
-                          [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[-1,1],[1,-1],[1,1]];
-                
-                for (let [dr,dc] of dirs) {
-                    for (let i=1; i<8; i++) {
-                        let r = row+dr*i, c = col+dc*i;
-                        if (r<0 || r>=8 || c<0 || c>=8) break;
-                        if (!board[r][c]) moves.push([r,c]);
+                let dirs = type === 'r' ? [[-1, 0], [1, 0], [0, -1], [0, 1]] :
+                    type === 'b' ? [[-1, -1], [-1, 1], [1, -1], [1, 1]] :
+                        [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1], [1, -1], [1, 1]];
+
+                for (let [dr, dc] of dirs) {
+                    for (let i = 1; i < 8; i++) {
+                        let r = row + dr * i, c = col + dc * i;
+                        if (r < 0 || r >= 8 || c < 0 || c >= 8) break;
+                        if (!board[r][c]) moves.push([r, c]);
                         else {
-                            if ((board[r][c]===board[r][c].toLowerCase())===isWhite)
-                                moves.push([r,c]);
+                            if ((board[r][c] === board[r][c].toLowerCase()) === isWhite)
+                                moves.push([r, c]);
                             break;
                         }
                     }
@@ -428,101 +455,88 @@
             }
             return moves;
         }
-        
+
         function handleClick(row, col) {
             if (!myColor) return;
-            
-            if ((myColor === 'w' && turn !== 'w') || (myColor === 'b' && turn !== 'b')) {
-                alert("Not your turn!");
+            if (turn !== myColor) return;
+
+            let piece = board[row][col];
+            let isMyPiece = piece && ((myColor === 'w' && piece === piece.toUpperCase()) ||
+                (myColor === 'b' && piece === piece.toLowerCase()));
+
+            // case 1: selecting/re-selecting my own piece
+            if (isMyPiece) {
+                selected = [row, col];
+                moves = getMoves(row, col);
+                renderBoard();
                 return;
             }
-            
-            if (selected === null) {
-                let piece = board[row][col];
-                if (piece && ((myColor==='w' && piece===piece.toUpperCase()) || 
-                             (myColor==='b' && piece===piece.toLowerCase()))) {
-                    selected = [row, col];
-                    moves = getMoves(row, col);
-                    renderBoard();
-                }
-                return;
-            }
-            
-            if (moves.some(([r,c]) => r===row && c===col)) {
+
+            // case 2: moving a previously selected piece
+            if (selected && moves.some(([r, c]) => r === row && c === col)) {
                 let [fr, fc] = selected;
                 board[row][col] = board[fr][fc];
                 board[fr][fc] = '';
                 turn = turn === 'w' ? 'b' : 'w';
-                
-                // Save to localStorage
-                const gameData = localStorage.getItem('game_' + gameId);
-                if (gameData) {
-                    const game = JSON.parse(gameData);
-                    game.board = board;
-                    game.turn = turn;
-                    localStorage.setItem('game_' + gameId, JSON.stringify(game));
+
+                if (conn && conn.open) {
+                    conn.send({ type: 'move', board: board, turn: turn });
                 }
+
+                selected = null;
+                moves = [];
+                renderBoard();
+                updateTurn();
+                return;
             }
-            
+
+            // case 3: clicked an invalid square, deselect
             selected = null;
             moves = [];
             renderBoard();
-            updateTurn();
         }
-        
+
         function renderBoard() {
             let html = '';
-            for (let i=0; i<8; i++) {
-                for (let j=0; j<8; j++) {
+            for (let i = 0; i < 8; i++) {
+                for (let j = 0; j < 8; j++) {
                     let piece = board[i][j];
-                    let classes = `square ${(i+j)%2===0 ? 'light' : 'dark'}`;
-                    
-                    if (selected && selected[0]===i && selected[1]===j)
-                        classes += ' selected';
-                    
-                    if (moves.some(([r,c]) => r===i && c===j))
-                        classes += board[i][j] ? ' capture' : ' possible';
-                    
+                    let classes = `square ${(i + j) % 2 === 0 ? 'light' : 'dark'}`;
+                    if (selected && selected[0] === i && selected[1] === j) classes += ' selected';
+                    if (moves.some(([r, c]) => r === i && c === j)) classes += board[i][j] ? ' capture' : ' possible';
                     html += `<div class="${classes}" onclick="handleClick(${i},${j})">${piece ? PIECES[piece] : ''}</div>`;
                 }
             }
             document.getElementById('board').innerHTML = html;
         }
-        
+
         function updateTurn() {
             let turnDiv = document.getElementById('turnLabel');
             turnDiv.innerText = turn === 'w' ? 'WHITE' : 'BLACK';
-            turnDiv.className = `turn ${turn==='w' ? 'white-turn' : 'black-turn'}`;
+            turnDiv.className = `turn ${turn === 'w' ? 'white-turn' : 'black-turn'}`;
         }
-        
+
         function resetGame() {
-            board = JSON.parse(JSON.stringify(START));
-            turn = 'w';
-            selected = null;
-            moves = [];
-            renderBoard();
-            updateTurn();
-            
-            const gameData = localStorage.getItem('game_' + gameId);
-            if (gameData) {
-                const game = JSON.parse(gameData);
-                game.board = board;
-                game.turn = turn;
-                localStorage.setItem('game_' + gameId, JSON.stringify(game));
+            if (confirm("Reset the game for both?")) {
+                board = JSON.parse(JSON.stringify(START));
+                turn = 'w';
+                selected = null; moves = [];
+                renderBoard(); updateTurn();
+                if (conn && conn.open) conn.send({ type: 'reset' });
             }
         }
-        
+
         function copyLink() {
             const link = document.getElementById('gameLink').innerText;
-            navigator.clipboard.writeText(link);
-            alert('✅ Link copied! Share with your friend');
+            navigator.clipboard.writeText(link).then(() => alert('✅ Copied!'));
         }
-        
+
         function exitGame() {
-            location.reload();
+            location.href = window.location.href.split('?')[0];
         }
-        
+
         renderBoard();
     </script>
 </body>
+
 </html>
