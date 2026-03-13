@@ -341,6 +341,16 @@
                     turn = data.turn;
                     renderBoard();
                     updateTurn();
+
+                    setTimeout(() => {
+                        if (!hasLegalMoves(turn)) {
+                            if (isCheck(turn)) {
+                                alert("CHECKMATE! " + (turn === 'w' ? "Black" : "White") + " wins!");
+                            } else {
+                                alert("STALEMATE! It's a draw.");
+                            }
+                        }
+                    }, 100);
                 } else if (data.type === 'reset') {
                     board = JSON.parse(JSON.stringify(START));
                     turn = 'w';
@@ -392,10 +402,9 @@
             updateTurn();
         }
 
-        function getMoves(row, col) {
-            let piece = board[row][col];
+        function getMoves(row, col, currentBoard = board) {
+            let piece = currentBoard[row][col];
             if (!piece) return [];
-
             let isWhite = piece === piece.toUpperCase();
             let type = piece.toLowerCase();
             let moves = [];
@@ -403,56 +412,50 @@
             if (type === 'p') {
                 let dir = isWhite ? -1 : 1;
                 let start = isWhite ? 6 : 1;
-
-                if (row + dir >= 0 && row + dir < 8 && !board[row + dir][col]) {
+                if (row + dir >= 0 && row + dir < 8 && !currentBoard[row + dir][col]) {
                     moves.push([row + dir, col]);
-                    if (row === start && !board[row + 2 * dir][col])
+                    if (row === start && !currentBoard[row + 2 * dir][col])
                         moves.push([row + 2 * dir, col]);
                 }
-
                 for (let dc of [-1, 1]) {
                     let nc = col + dc;
                     if (nc >= 0 && nc < 8 && row + dir >= 0 && row + dir < 8) {
-                        let target = board[row + dir][nc];
+                        let target = currentBoard[row + dir][nc];
                         if (target && (target === target.toLowerCase()) === isWhite)
                             moves.push([row + dir, nc]);
                     }
                 }
-            }
-            else if (type === 'n') {
+            } else if (type === 'n') {
                 let jumps = [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]];
                 for (let [dr, dc] of jumps) {
                     let r = row + dr, c = col + dc;
                     if (r >= 0 && r < 8 && c >= 0 && c < 8) {
-                        if (!board[r][c] || (board[r][c] === board[r][c].toLowerCase()) === isWhite)
+                        if (!currentBoard[r][c] || (currentBoard[r][c] === currentBoard[r][c].toLowerCase()) === isWhite)
                             moves.push([r, c]);
                     }
                 }
-            }
-            else if (type === 'k') {
+            } else if (type === 'k') {
                 for (let dr of [-1, 0, 1]) {
                     for (let dc of [-1, 0, 1]) {
                         if (dr === 0 && dc === 0) continue;
                         let r = row + dr, c = col + dc;
                         if (r >= 0 && r < 8 && c >= 0 && c < 8) {
-                            if (!board[r][c] || (board[r][c] === board[r][c].toLowerCase()) === isWhite)
+                            if (!currentBoard[r][c] || (currentBoard[r][c] === currentBoard[r][c].toLowerCase()) === isWhite)
                                 moves.push([r, c]);
                         }
                     }
                 }
-            }
-            else {
+            } else {
                 let dirs = type === 'r' ? [[-1, 0], [1, 0], [0, -1], [0, 1]] :
                     type === 'b' ? [[-1, -1], [-1, 1], [1, -1], [1, 1]] :
                         [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1], [1, -1], [1, 1]];
-
                 for (let [dr, dc] of dirs) {
                     for (let i = 1; i < 8; i++) {
                         let r = row + dr * i, c = col + dc * i;
                         if (r < 0 || r >= 8 || c < 0 || c >= 8) break;
-                        if (!board[r][c]) moves.push([r, c]);
+                        if (!currentBoard[r][c]) moves.push([r, c]);
                         else {
-                            if ((board[r][c] === board[r][c].toLowerCase()) === isWhite)
+                            if ((currentBoard[r][c] === currentBoard[r][c].toLowerCase()) === isWhite)
                                 moves.push([r, c]);
                             break;
                         }
@@ -462,23 +465,75 @@
             return moves;
         }
 
+        function isCheck(color, currentBoard = board) {
+            let king = color === 'w' ? 'K' : 'k';
+            let kr = -1, kc = -1;
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    if (currentBoard[r][c] === king) { kr = r; kc = c; break; }
+                }
+            }
+            if (kr === -1) return false;
+            let opponent = color === 'w' ? 'b' : 'w';
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    let p = currentBoard[r][c];
+                    if (!p) continue;
+                    let isOpponent = (opponent === 'w' ? p === p.toUpperCase() : p === p.toLowerCase());
+                    if (isOpponent) {
+                        let pseudoMoves = getMoves(r, c, currentBoard);
+                        if (pseudoMoves.some(([tr, tc]) => tr === kr && tc === kc)) return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        function getLegalMoves(row, col) {
+            let piece = board[row][col];
+            let isWhite = piece === piece.toUpperCase();
+            let color = isWhite ? 'w' : 'b';
+            let pseudoMoves = getMoves(row, col);
+            let legal = [];
+            for (let [tr, tc] of pseudoMoves) {
+                let oldTarget = board[tr][tc];
+                board[tr][tc] = board[row][col];
+                board[row][col] = '';
+                if (!isCheck(color)) legal.push([tr, tc]);
+                board[row][col] = board[tr][tc];
+                board[tr][tc] = oldTarget;
+            }
+            return legal;
+        }
+
+        function hasLegalMoves(color) {
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    let piece = board[r][c];
+                    if (piece && (color === 'w' ? piece === piece.toUpperCase() : piece === piece.toLowerCase())) {
+                        if (getLegalMoves(r, c).length > 0) return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         function handleClick(row, col) {
             if (!myColor) return;
             if (turn !== myColor) return;
+            if (!hasLegalMoves(turn)) return; // Game over
 
             let piece = board[row][col];
             let isMyPiece = piece && ((myColor === 'w' && piece === piece.toUpperCase()) ||
                 (myColor === 'b' && piece === piece.toLowerCase()));
 
-            // case 1: selecting/re-selecting my own piece
             if (isMyPiece) {
                 selected = [row, col];
-                moves = getMoves(row, col);
+                moves = getLegalMoves(row, col);
                 renderBoard();
                 return;
             }
 
-            // case 2: moving a previously selected piece
             if (selected && moves.some(([r, c]) => r === row && c === col)) {
                 let [fr, fc] = selected;
                 board[row][col] = board[fr][fc];
@@ -493,10 +548,20 @@
                 moves = [];
                 renderBoard();
                 updateTurn();
+
+                // Check for Game Over after turn update
+                setTimeout(() => {
+                    if (!hasLegalMoves(turn)) {
+                        if (isCheck(turn)) {
+                            alert("CHECKMATE! " + (turn === 'w' ? "Black" : "White") + " wins!");
+                        } else {
+                            alert("STALEMATE! It's a draw.");
+                        }
+                    }
+                }, 100);
                 return;
             }
 
-            // case 3: clicked an invalid square, deselect
             selected = null;
             moves = [];
             renderBoard();
@@ -506,11 +571,13 @@
             let html = '';
             for (let i = 0; i < 8; i++) {
                 for (let j = 0; j < 8; j++) {
-                    let piece = board[i][j];
-                    let classes = `square ${(i + j) % 2 === 0 ? 'light' : 'dark'}`;
-                    if (selected && selected[0] === i && selected[1] === j) classes += ' selected';
-                    if (moves.some(([r, c]) => r === i && c === j)) classes += board[i][j] ? ' capture' : ' possible';
-                    html += `<div class="${classes}" onclick="handleClick(${i},${j})">${piece ? PIECES[piece] : ''}</div>`;
+                    let r = myColor === 'b' ? 7 - i : i;
+                    let c = myColor === 'b' ? 7 - j : j;
+                    let piece = board[r][c];
+                    let classes = `square ${(r + c) % 2 === 0 ? 'light' : 'dark'}`;
+                    if (selected && selected[0] === r && selected[1] === c) classes += ' selected';
+                    if (moves.some(([mr, mc]) => mr === r && mc === c)) classes += board[r][c] ? ' capture' : ' possible';
+                    html += `<div class="${classes}" onclick="handleClick(${r},${c})">${piece ? PIECES[piece] : ''}</div>`;
                 }
             }
             document.getElementById('board').innerHTML = html;
@@ -518,8 +585,11 @@
 
         function updateTurn() {
             let turnDiv = document.getElementById('turnLabel');
-            turnDiv.innerText = turn === 'w' ? 'WHITE' : 'BLACK';
+            let isCurrentInCheck = isCheck(turn);
+            turnDiv.innerText = (isCurrentInCheck ? "CHECK! " : "") + (turn === 'w' ? 'WHITE' : 'BLACK');
             turnDiv.className = `turn ${turn === 'w' ? 'white-turn' : 'black-turn'}`;
+            if (isCurrentInCheck) turnDiv.style.border = "2px solid red";
+            else turnDiv.style.border = "none";
         }
 
         function resetGame() {
