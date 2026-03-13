@@ -52,7 +52,4 @@ Since this is a single-file application, deployment is incredibly easy:
 
 *Enjoy the game!*
 
-
 ---
-
-*Enjoy the game!*
